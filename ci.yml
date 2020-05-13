@@ -274,7 +274,7 @@ linters:
     - depguard      # dep 包管理工具，第三方 package 白名单，有自己的config文件，https://github.com/OpenPeeDeeP/depguard
     # - gomodguard    # go mod 包管理工具，第三方 package 白名单。
     - dogsled       # 超过n个返回值未接受，eg: x, _, _, _, := f()
-    - dupl          # 检查重复代码
+    # - dupl          # 检查重复代码
     - errcheck      # 未处理的 error，eg: defer file.Close()
     - gochecknoinits  # 检查是否有 func init() 函数
     - goconst       # 查找是否有重复的 string 可以用常量 const 表示
@@ -356,10 +356,10 @@ issues:
         - staticcheck
       text: "SA9003:" # Empty body in an if or else branch
 
-    ### 这里指 golint 时，如果报错内容包括 should have xxx comment 则不显示。
-    #- linters:
-    #    - golint
-    #  text: "^.*should have.*comment"  # 必须写注释
+    ## 这里指 golint 时，如果报错内容包括 should have xxx comment 则不显示。
+    - linters:
+        - golint
+      text: "^.*which can be annoying to use"  # 必须写注释
 
     # 这里是指 structcheck 时，如果源代码中包含 tableName / tablename 则不检查错误。
     - linters:
