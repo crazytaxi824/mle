@@ -76,6 +76,21 @@ func (uint16Type) Contains(a, b []uint16) bool {
 	return true
 }
 
+// Contains any of the elements
+func (uint16Type) ContainsAny(a, b []uint16) bool {
+	tmp := make(map[uint16]struct{})
+	for _, v := range a {
+		tmp[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := tmp[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Intersection 交集 a & b，return elements in a and b at same time
 func (uint16Type) Intersection(a, b []uint16) []uint16 {
 	tmp := make(map[uint16]struct{})

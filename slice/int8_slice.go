@@ -76,6 +76,21 @@ func (int8Type) Contains(a, b []int8) bool {
 	return true
 }
 
+// Contains any of the elements
+func (int8Type) ContainsAny(a, b []int8) bool {
+	tmp := make(map[int8]struct{})
+	for _, v := range a {
+		tmp[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := tmp[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Intersection 交集 a & b，return elements in a and b at same time
 func (int8Type) Intersection(a, b []int8) []int8 {
 	tmp := make(map[int8]struct{})

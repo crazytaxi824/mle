@@ -76,6 +76,21 @@ func (runeType) Contains(a, b []rune) bool {
 	return true
 }
 
+// Contains any of the elements
+func (runeType) ContainsAny(a, b []rune) bool {
+	tmp := make(map[rune]struct{})
+	for _, v := range a {
+		tmp[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := tmp[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Intersection 交集 a & b，return elements in a and b at same time
 func (runeType) Intersection(a, b []rune) []rune {
 	tmp := make(map[rune]struct{})

@@ -1,6 +1,7 @@
 package slice
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -29,4 +30,6 @@ func TestIndexOfInt(t *testing.T) {
 
 	ast.Equal(Int().SameElements(Int().SymmetricDifference(myNum, []int{1, 2, 7, 8}), []int{3, 4, 5, 7, 8}), true)
 	ast.Equal(Int().SameElements(Int().SymmetricDifference(myNum, []int{1, 2, 3, 4, 5}), []int{}), true)
+
+	ast.Equal(bytes.ContainsAny([]byte("abcdefg"), "gay"), true)
 }

@@ -76,6 +76,21 @@ func (intType) Contains(a, b []int) bool {
 	return true
 }
 
+// Contains any of the elements
+func (intType) ContainsAny(a, b []int) bool {
+	tmp := make(map[int]struct{})
+	for _, v := range a {
+		tmp[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := tmp[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Intersection 交集 a & b，return elements in a and b at same time
 func (intType) Intersection(a, b []int) []int {
 	tmp := make(map[int]struct{})
