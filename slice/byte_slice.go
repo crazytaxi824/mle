@@ -61,8 +61,8 @@ func (byteType) SameElements(a, b []byte) bool {
 	return len(tmp) == 0
 }
 
-// Subset 子集, is b subset of a?
-func (byteType) Subset(a, b []byte) bool {
+// Contains 子集, is b subset of a?
+func (byteType) Contains(a, b []byte) bool {
 	tmp := make(map[byte]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}

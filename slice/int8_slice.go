@@ -61,8 +61,8 @@ func (int8Type) SameElements(a, b []int8) bool {
 	return len(tmp) == 0
 }
 
-// Subset 子集, is b subset of a?
-func (int8Type) Subset(a, b []int8) bool {
+// Contains 子集, is b subset of a?
+func (int8Type) Contains(a, b []int8) bool {
 	tmp := make(map[int8]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}

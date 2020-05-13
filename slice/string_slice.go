@@ -61,8 +61,8 @@ func (stringType) SameElements(a, b []string) bool {
 	return len(tmp) == 0
 }
 
-// Subset 子集, is b subset of a?
-func (stringType) Subset(a, b []string) bool {
+// Contains 子集, is b subset of a?
+func (stringType) Contains(a, b []string) bool {
 	tmp := make(map[string]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}

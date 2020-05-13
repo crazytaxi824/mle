@@ -61,8 +61,8 @@ func (runeType) SameElements(a, b []rune) bool {
 	return len(tmp) == 0
 }
 
-// Subset 子集, is b subset of a?
-func (runeType) Subset(a, b []rune) bool {
+// Contains 子集, is b subset of a?
+func (runeType) Contains(a, b []rune) bool {
 	tmp := make(map[rune]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}

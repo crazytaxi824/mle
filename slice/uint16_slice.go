@@ -61,8 +61,8 @@ func (uint16Type) SameElements(a, b []uint16) bool {
 	return len(tmp) == 0
 }
 
-// Subset 子集, is b subset of a?
-func (uint16Type) Subset(a, b []uint16) bool {
+// Contains 子集, is b subset of a?
+func (uint16Type) Contains(a, b []uint16) bool {
 	tmp := make(map[uint16]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}

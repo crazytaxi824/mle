@@ -19,8 +19,8 @@ func TestIndexOfInt(t *testing.T) {
 	ast.Equal(Int().SameElements(myNum, []int{1, 1, 2, 2, 3, 3, 4, 4, 5}), true)
 	ast.Equal(Int().SameElements(myNum, []int{1, 1, 2, 2, 3, 3, 3, 4, 5}), false)
 
-	ast.Equal(Int().Subset(myNum, []int{1, 2, 5}), true)
-	ast.Equal(Int().Subset(myNum, []int{1, 2, 3, 7}), false)
+	ast.Equal(Int().Contains(myNum, []int{1, 2, 5}), true)
+	ast.Equal(Int().Contains(myNum, []int{1, 2, 3, 7}), false)
 
 	ast.Equal(Int().SameElements(Int().Intersection(myNum, []int{1, 2, 3}), []int{1, 2, 3}), true)
 	ast.Equal(Int().SameElements(Int().Union(myNum, []int{7, 8, 9}), []int{1, 2, 3, 4, 5, 7, 8, 9}), true)
