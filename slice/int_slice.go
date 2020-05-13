@@ -1,5 +1,7 @@
 package slice
 
+const breakPoint = 300
+
 type intType struct{}
 
 func Int() intType { return intType{} }
@@ -61,6 +63,7 @@ func (intType) SameElements(a, b []int) bool {
 	return len(tmp) == 0
 }
 
+// TODO add breakPoint
 // Contains 子集, is b subset of a?
 func (intType) Contains(a, b []int) bool {
 	tmp := make(map[int]struct{})
@@ -78,6 +81,17 @@ func (intType) Contains(a, b []int) bool {
 
 // Contains any of the elements
 func (intType) ContainsAny(a, b []int) bool {
+	if len(a)*len(b) < breakPoint {
+		for _, i := range a {
+			for _, j := range b {
+				if i == j {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
 	tmp := make(map[int]struct{})
 	for _, v := range a {
 		tmp[v] = struct{}{}
