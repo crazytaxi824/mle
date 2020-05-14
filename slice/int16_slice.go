@@ -40,7 +40,7 @@ func (int16Type) Equal(a, b []int16) bool {
 	return true
 }
 
-// SameElements 两个slice元素相同，不要求顺序
+// SameElements 两个slice元素相同，不要求顺序，但是重复次数必须相同
 func (int16Type) SameElements(a, b []int16) bool {
 	if len(a) != len(b) {
 		return false
@@ -61,7 +61,7 @@ func (int16Type) SameElements(a, b []int16) bool {
 	return len(tmp) == 0
 }
 
-// Contains 子集, is b subset of a?
+// Contains a包含b中的所有元素，不考虑顺序和重复次数
 func (int16Type) Contains(a, b []int16) bool {
 	tmp := make(map[int16]struct{})
 	for _, v := range a {
