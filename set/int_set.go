@@ -5,12 +5,12 @@ import (
 	"errors"
 )
 
-type hashSetInt struct {
+type intHashSet struct {
 	elements map[int]struct{}
 }
 
-func NewIntSet(n ...int) *hashSetInt {
-	var s hashSetInt
+func NewIntSet(n ...int) *intHashSet {
+	var s intHashSet
 	s.elements = make(map[int]struct{})
 	for _, v := range n {
 		s.elements[v] = struct{}{}
@@ -19,12 +19,12 @@ func NewIntSet(n ...int) *hashSetInt {
 }
 
 // add element
-func (s *hashSetInt) Add(n int) {
+func (s *intHashSet) Add(n int) {
 	s.elements[n] = struct{}{}
 }
 
 // Pop random element
-func (s *hashSetInt) Pop() (int, error) {
+func (s *intHashSet) Pop() (int, error) {
 	for k := range s.elements {
 		delete(s.elements, k)
 		return k, nil
@@ -33,17 +33,17 @@ func (s *hashSetInt) Pop() (int, error) {
 }
 
 // Delete element
-func (s *hashSetInt) Delete(element int) {
+func (s *intHashSet) Delete(element int) {
 	delete(s.elements, element)
 }
 
 // Length of set
-func (s *hashSetInt) Len() int {
+func (s *intHashSet) Len() int {
 	return len(s.elements)
 }
 
 // for range the set
-func (s *hashSetInt) Range(fn func(element int) bool) {
+func (s *intHashSet) Range(fn func(element int) bool) {
 	for k := range s.elements {
 		if !fn(k) {
 			return
@@ -52,7 +52,7 @@ func (s *hashSetInt) Range(fn func(element int) bool) {
 }
 
 // ToSlice return slice
-func (s *hashSetInt) ToSlice() []int {
+func (s *intHashSet) ToSlice() []int {
 	result := make([]int, len(s.elements))
 	var count int
 	for i := range s.elements {
@@ -63,12 +63,13 @@ func (s *hashSetInt) ToSlice() []int {
 }
 
 // Contains element
-func (s *hashSetInt) Contains(n int, m ...int) bool {
-	if _, ok := s.elements[n]; !ok {
-		return false
-	}
+func (s *intHashSet) Contains(n int) bool {
+	_, ok := s.elements[n]
+	return ok
+}
 
-	for _, v := range m {
+func (s *intHashSet) ContainsN(n []int) bool {
+	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {
 			return false
 		}
@@ -76,13 +77,22 @@ func (s *hashSetInt) Contains(n int, m ...int) bool {
 	return true
 }
 
+func (s *intHashSet) ContainsAny(n []int) bool {
+	for _, v := range n {
+		if _, ok := s.elements[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Reset the set
-func (s *hashSetInt) Reset() {
+func (s *intHashSet) Reset() {
 	s.elements = make(map[int]struct{})
 }
 
 // Equal, elements
-func (s *hashSetInt) Equal(h *hashSetInt) bool {
+func (s *intHashSet) Equal(h *intHashSet) bool {
 	if s.Len() != h.Len() {
 		return false
 	}
