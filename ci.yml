@@ -330,7 +330,8 @@ issues:
 
   # 如果错误内容和以下正则匹配的话则不显示。
   exclude:
-    - ^.*should have.*comment   # golint 和 stylecheck 都不报注释错误。
+    # golint 和 stylecheck 都不报注释错误。
+    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
 
   exclude-rules: # 设置某个目录的排除规则。
     - path: _test\.go # _test.go 测试文件，不使用以下lint
@@ -356,10 +357,10 @@ issues:
         - staticcheck
       text: "SA9003:" # Empty body in an if or else branch
 
-    ## 这里指 golint 时，如果报错内容包括 should have xxx comment 则不显示。
+    ## 这里指 golint 时，如果报错内容包括以下字段时则不显示。
     - linters:
         - golint
-      text: "^.*which can be annoying to use"  # 必须写注释
+      text: "^.*which can be annoying to use"  # 出参为私有结构体时，报错
 
     # 这里是指 structcheck 时，如果源代码中包含 tableName / tablename 则不检查错误。
     - linters:
