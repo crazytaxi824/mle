@@ -6,27 +6,27 @@ import (
 )
 
 type hashSetInt struct {
-	items map[int]struct{}
+	elements map[int]struct{}
 }
 
 func NewIntSet(n ...int) *hashSetInt {
 	var s hashSetInt
-	s.items = make(map[int]struct{})
+	s.elements = make(map[int]struct{})
 	for _, v := range n {
-		s.items[v] = struct{}{}
+		s.elements[v] = struct{}{}
 	}
 	return &s
 }
 
 // add element
 func (s *hashSetInt) Add(n int) {
-	s.items[n] = struct{}{}
+	s.elements[n] = struct{}{}
 }
 
 // Pop random element
 func (s *hashSetInt) Pop() (int, error) {
-	for k := range s.items {
-		delete(s.items, k)
+	for k := range s.elements {
+		delete(s.elements, k)
 		return k, nil
 	}
 	return 0, errors.New("empty set")
@@ -34,17 +34,17 @@ func (s *hashSetInt) Pop() (int, error) {
 
 // Delete element
 func (s *hashSetInt) Delete(element int) {
-	delete(s.items, element)
+	delete(s.elements, element)
 }
 
 // Length of set
 func (s *hashSetInt) Len() int {
-	return len(s.items)
+	return len(s.elements)
 }
 
 // for range the set
 func (s *hashSetInt) Range(fn func(element int) bool) {
-	for k := range s.items {
+	for k := range s.elements {
 		if !fn(k) {
 			return
 		}
@@ -53,9 +53,9 @@ func (s *hashSetInt) Range(fn func(element int) bool) {
 
 // ToSlice return slice
 func (s *hashSetInt) ToSlice() []int {
-	result := make([]int, len(s.items))
+	result := make([]int, len(s.elements))
 	var count int
-	for i := range s.items {
+	for i := range s.elements {
 		result[count] = i
 		count++
 	}
@@ -64,12 +64,12 @@ func (s *hashSetInt) ToSlice() []int {
 
 // Contains element
 func (s *hashSetInt) Contains(n int, m ...int) bool {
-	if _, ok := s.items[n]; !ok {
+	if _, ok := s.elements[n]; !ok {
 		return false
 	}
 
 	for _, v := range m {
-		if _, ok := s.items[v]; !ok {
+		if _, ok := s.elements[v]; !ok {
 			return false
 		}
 	}
@@ -78,7 +78,7 @@ func (s *hashSetInt) Contains(n int, m ...int) bool {
 
 // Reset the set
 func (s *hashSetInt) Reset() {
-	s.items = make(map[int]struct{})
+	s.elements = make(map[int]struct{})
 }
 
 // Equal, elements

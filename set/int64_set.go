@@ -6,27 +6,27 @@ import (
 )
 
 type hashSetInt64 struct {
-	items map[int64]struct{}
+	elements map[int64]struct{}
 }
 
 func NewInt64Set(n ...int64) *hashSetInt64 {
 	var s hashSetInt64
-	s.items = make(map[int64]struct{})
+	s.elements = make(map[int64]struct{})
 	for _, v := range n {
-		s.items[v] = struct{}{}
+		s.elements[v] = struct{}{}
 	}
 	return &s
 }
 
 // add element
 func (s *hashSetInt64) Add(n int64) {
-	s.items[n] = struct{}{}
+	s.elements[n] = struct{}{}
 }
 
 // Pop random element
 func (s *hashSetInt64) Pop() (int64, error) {
-	for k := range s.items {
-		delete(s.items, k)
+	for k := range s.elements {
+		delete(s.elements, k)
 		return k, nil
 	}
 	return 0, errors.New("empty set")
@@ -34,17 +34,17 @@ func (s *hashSetInt64) Pop() (int64, error) {
 
 // Delete element
 func (s *hashSetInt64) Delete(element int64) {
-	delete(s.items, element)
+	delete(s.elements, element)
 }
 
 // Length of set
 func (s *hashSetInt64) Len() int {
-	return len(s.items)
+	return len(s.elements)
 }
 
 // for range the set
 func (s *hashSetInt64) Range(fn func(element int64) bool) {
-	for k := range s.items {
+	for k := range s.elements {
 		if !fn(k) {
 			return
 		}
@@ -53,9 +53,9 @@ func (s *hashSetInt64) Range(fn func(element int64) bool) {
 
 // ToSlice return slice
 func (s *hashSetInt64) ToSlice() []int64 {
-	result := make([]int64, len(s.items))
+	result := make([]int64, len(s.elements))
 	var count int
-	for i := range s.items {
+	for i := range s.elements {
 		result[count] = i
 		count++
 	}
@@ -64,12 +64,12 @@ func (s *hashSetInt64) ToSlice() []int64 {
 
 // Contains element
 func (s *hashSetInt64) Contains(n int64, m ...int64) bool {
-	if _, ok := s.items[n]; !ok {
+	if _, ok := s.elements[n]; !ok {
 		return false
 	}
 
 	for _, v := range m {
-		if _, ok := s.items[v]; !ok {
+		if _, ok := s.elements[v]; !ok {
 			return false
 		}
 	}
@@ -78,7 +78,7 @@ func (s *hashSetInt64) Contains(n int64, m ...int64) bool {
 
 // Reset the set
 func (s *hashSetInt64) Reset() {
-	s.items = make(map[int64]struct{})
+	s.elements = make(map[int64]struct{})
 }
 
 // Equal, elements

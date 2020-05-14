@@ -6,27 +6,27 @@ import (
 )
 
 type hashSetString struct {
-	items map[string]struct{}
+	elements map[string]struct{}
 }
 
 func NewStringSet(n ...string) *hashSetString {
 	var s hashSetString
-	s.items = make(map[string]struct{})
+	s.elements = make(map[string]struct{})
 	for _, v := range n {
-		s.items[v] = struct{}{}
+		s.elements[v] = struct{}{}
 	}
 	return &s
 }
 
 // add element
 func (s *hashSetString) Add(n string) {
-	s.items[n] = struct{}{}
+	s.elements[n] = struct{}{}
 }
 
 // Pop random element
 func (s *hashSetString) Pop() (string, error) {
-	for k := range s.items {
-		delete(s.items, k)
+	for k := range s.elements {
+		delete(s.elements, k)
 		return k, nil
 	}
 	return "", errors.New("empty set")
@@ -34,17 +34,17 @@ func (s *hashSetString) Pop() (string, error) {
 
 // Delete element
 func (s *hashSetString) Delete(element string) {
-	delete(s.items, element)
+	delete(s.elements, element)
 }
 
 // Length of set
 func (s *hashSetString) Len() int {
-	return len(s.items)
+	return len(s.elements)
 }
 
 // for range the set
 func (s *hashSetString) Range(fn func(element string) bool) {
-	for k := range s.items {
+	for k := range s.elements {
 		if !fn(k) {
 			return
 		}
@@ -53,9 +53,9 @@ func (s *hashSetString) Range(fn func(element string) bool) {
 
 // ToSlice return slice
 func (s *hashSetString) ToSlice() []string {
-	result := make([]string, len(s.items))
+	result := make([]string, len(s.elements))
 	var count int
-	for i := range s.items {
+	for i := range s.elements {
 		result[count] = i
 		count++
 	}
@@ -64,12 +64,12 @@ func (s *hashSetString) ToSlice() []string {
 
 // Contains element
 func (s *hashSetString) Contains(n string, m ...string) bool {
-	if _, ok := s.items[n]; !ok {
+	if _, ok := s.elements[n]; !ok {
 		return false
 	}
 
 	for _, v := range m {
-		if _, ok := s.items[v]; !ok {
+		if _, ok := s.elements[v]; !ok {
 			return false
 		}
 	}
@@ -78,7 +78,7 @@ func (s *hashSetString) Contains(n string, m ...string) bool {
 
 // Reset the set
 func (s *hashSetString) Reset() {
-	s.items = make(map[string]struct{})
+	s.elements = make(map[string]struct{})
 }
 
 // Equal, elements
