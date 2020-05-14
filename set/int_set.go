@@ -62,7 +62,7 @@ func (s *hashSetInt16) ToSlice() []int16 {
 	return result
 }
 
-// Contains element
+// ContainsLong element
 func (s *hashSetInt16) Contains(n int16, m ...int16) bool {
 	if _, ok := s.items[n]; !ok {
 		return false
