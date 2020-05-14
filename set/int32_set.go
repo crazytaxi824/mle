@@ -5,13 +5,13 @@ import (
 	"errors"
 )
 
-type hashSetInt struct {
-	elements map[int]struct{}
+type hashSetInt32 struct {
+	elements map[int32]struct{}
 }
 
-func NewIntSet(n ...int) *hashSetInt {
-	var s hashSetInt
-	s.elements = make(map[int]struct{})
+func NewInt32Set(n ...int32) *hashSetInt32 {
+	var s hashSetInt32
+	s.elements = make(map[int32]struct{})
 	for _, v := range n {
 		s.elements[v] = struct{}{}
 	}
@@ -19,12 +19,12 @@ func NewIntSet(n ...int) *hashSetInt {
 }
 
 // add element
-func (s *hashSetInt) Add(n int) {
+func (s *hashSetInt32) Add(n int32) {
 	s.elements[n] = struct{}{}
 }
 
 // Pop random element
-func (s *hashSetInt) Pop() (int, error) {
+func (s *hashSetInt32) Pop() (int32, error) {
 	for k := range s.elements {
 		delete(s.elements, k)
 		return k, nil
@@ -33,17 +33,17 @@ func (s *hashSetInt) Pop() (int, error) {
 }
 
 // Delete element
-func (s *hashSetInt) Delete(element int) {
+func (s *hashSetInt32) Delete(element int32) {
 	delete(s.elements, element)
 }
 
 // Length of set
-func (s *hashSetInt) Len() int {
+func (s *hashSetInt32) Len() int {
 	return len(s.elements)
 }
 
 // for range the set
-func (s *hashSetInt) Range(fn func(element int) bool) {
+func (s *hashSetInt32) Range(fn func(element int32) bool) {
 	for k := range s.elements {
 		if !fn(k) {
 			return
@@ -52,8 +52,8 @@ func (s *hashSetInt) Range(fn func(element int) bool) {
 }
 
 // ToSlice return slice
-func (s *hashSetInt) ToSlice() []int {
-	result := make([]int, len(s.elements))
+func (s *hashSetInt32) ToSlice() []int32 {
+	result := make([]int32, len(s.elements))
 	var count int
 	for i := range s.elements {
 		result[count] = i
@@ -63,7 +63,7 @@ func (s *hashSetInt) ToSlice() []int {
 }
 
 // Contains element
-func (s *hashSetInt) Contains(n int, m ...int) bool {
+func (s *hashSetInt32) Contains(n int32, m ...int32) bool {
 	if _, ok := s.elements[n]; !ok {
 		return false
 	}
@@ -77,18 +77,18 @@ func (s *hashSetInt) Contains(n int, m ...int) bool {
 }
 
 // Reset the set
-func (s *hashSetInt) Reset() {
-	s.elements = make(map[int]struct{})
+func (s *hashSetInt32) Reset() {
+	s.elements = make(map[int32]struct{})
 }
 
 // Equal, elements
-func (s *hashSetInt) Equal(h *hashSetInt) bool {
+func (s *hashSetInt32) Equal(h *hashSetInt32) bool {
 	if s.Len() != h.Len() {
 		return false
 	}
 
 	var mark = true
-	h.Range(func(elem int) bool {
+	h.Range(func(elem int32) bool {
 		if s.Contains(elem) {
 			return true
 		}
