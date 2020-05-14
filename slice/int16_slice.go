@@ -46,7 +46,7 @@ func (int16Type) SameElements(a, b []int16) bool {
 		return false
 	}
 
-	tmp := make(map[int16]int)
+	tmp := make(map[int16]int, len(a))
 	for _, v := range a {
 		tmp[v]++
 	}
@@ -63,7 +63,7 @@ func (int16Type) SameElements(a, b []int16) bool {
 
 // Contains a包含b中的所有元素，不考虑顺序和重复次数
 func (int16Type) Contains(a, b []int16) bool {
-	tmp := make(map[int16]struct{})
+	tmp := make(map[int16]struct{}, len(a))
 	for _, v := range a {
 		tmp[v] = struct{}{}
 	}
@@ -76,95 +76,95 @@ func (int16Type) Contains(a, b []int16) bool {
 	return true
 }
 
-// Contains any of the elements
-func (int16Type) ContainsAny(a, b []int16) bool {
-	tmp := make(map[int16]struct{})
-	for _, v := range a {
-		tmp[v] = struct{}{}
-	}
-
-	for _, v := range b {
-		if _, ok := tmp[v]; ok {
-			return true
-		}
-	}
-	return false
-}
-
-// Intersection 交集 a & b，return elements in a and b at same time
-func (int16Type) Intersection(a, b []int16) []int16 {
-	tmp := make(map[int16]struct{})
-	for _, v := range a {
-		tmp[v] = struct{}{}
-	}
-
-	var result []int16
-	for _, v := range b {
-		if _, ok := tmp[v]; ok {
-			result = append(result, v)
-		}
-	}
-
-	return result
-}
-
-// Union 并集 a | b, return elements in a or in b
-func (int16Type) Union(a, b []int16) []int16 {
-	tmp := make(map[int16]struct{})
-	for _, v := range a {
-		tmp[v] = struct{}{}
-	}
-
-	for _, v := range b {
-		tmp[v] = struct{}{}
-	}
-
-	var result []int16
-	for k := range tmp {
-		result = append(result, k)
-	}
-
-	return result
-}
-
-// Difference 差集 a - diff, return elements in a but not in diff
-func (int16Type) Difference(a, diff []int16) []int16 {
-	tmp := make(map[int16]struct{})
-	for _, v := range a {
-		tmp[v] = struct{}{}
-	}
-
-	for _, v := range diff {
-		delete(tmp, v)
-	}
-
-	var result []int16
-	for k := range tmp {
-		result = append(result, k)
-	}
-
-	return result
-}
-
-// SymmetricDifference 对称差集, elements in a or in b, but not in a&b
-func (int16Type) SymmetricDifference(a, b []int16) []int16 {
-	tmp := make(map[int16]struct{})
-	for _, v := range a {
-		tmp[v] = struct{}{}
-	}
-
-	for _, v := range b {
-		if _, ok := tmp[v]; !ok {
-			tmp[v] = struct{}{}
-		} else {
-			delete(tmp, v)
-		}
-	}
-
-	var result []int16
-	for k := range tmp {
-		result = append(result, k)
-	}
-
-	return result
-}
+// // Contains any of the elements
+// func (int16Type) ContainsAny(a, b []int16) bool {
+// 	tmp := make(map[int16]struct{})
+// 	for _, v := range a {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	for _, v := range b {
+// 		if _, ok := tmp[v]; ok {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+//
+// // Intersection 交集 a & b，return elements in a and b at same time
+// func (int16Type) Intersection(a, b []int16) []int16 {
+// 	tmp := make(map[int16]struct{})
+// 	for _, v := range a {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	var result []int16
+// 	for _, v := range b {
+// 		if _, ok := tmp[v]; ok {
+// 			result = append(result, v)
+// 		}
+// 	}
+//
+// 	return result
+// }
+//
+// // Union 并集 a | b, return elements in a or in b
+// func (int16Type) Union(a, b []int16) []int16 {
+// 	tmp := make(map[int16]struct{})
+// 	for _, v := range a {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	for _, v := range b {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	var result []int16
+// 	for k := range tmp {
+// 		result = append(result, k)
+// 	}
+//
+// 	return result
+// }
+//
+// // Difference 差集 a - diff, return elements in a but not in diff
+// func (int16Type) Difference(a, diff []int16) []int16 {
+// 	tmp := make(map[int16]struct{})
+// 	for _, v := range a {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	for _, v := range diff {
+// 		delete(tmp, v)
+// 	}
+//
+// 	var result []int16
+// 	for k := range tmp {
+// 		result = append(result, k)
+// 	}
+//
+// 	return result
+// }
+//
+// // SymmetricDifference 对称差集, elements in a or in b, but not in a&b
+// func (int16Type) SymmetricDifference(a, b []int16) []int16 {
+// 	tmp := make(map[int16]struct{})
+// 	for _, v := range a {
+// 		tmp[v] = struct{}{}
+// 	}
+//
+// 	for _, v := range b {
+// 		if _, ok := tmp[v]; !ok {
+// 			tmp[v] = struct{}{}
+// 		} else {
+// 			delete(tmp, v)
+// 		}
+// 	}
+//
+// 	var result []int16
+// 	for k := range tmp {
+// 		result = append(result, k)
+// 	}
+//
+// 	return result
+// }
