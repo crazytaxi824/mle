@@ -54,13 +54,54 @@ func (it runeType) Contains(a, sub []rune) bool {
 }
 
 // is A contains any element of SUB ?
-func (runeType) ContainsAny(a, sub []rune) bool {
-	for ka := range a {
-		for kb := range sub {
-			if a[ka] == sub[kb] {
-				return true
-			}
+func (it runeType) ContainsAny(a, sub []rune) bool {
+	for k := range sub {
+		if it.IndexOf(a, sub[k]) != -1 {
+			return true
 		}
 	}
 	return false
+}
+
+// insert element in the certain index
+func (runeType) Insert(s []rune, element rune, index int) []rune {
+	if index < 0 {
+		index = 0
+	}
+
+	lenS := len(s)
+	if index >= lenS {
+		s = append(s, element)
+		return s
+	}
+
+	result := s[:index:index]
+	result = append(result, element)
+	result = append(result, s[index:]...)
+
+	return result
+}
+
+// delete by index
+func (runeType) DeleteByIndex(s []rune, index int) []rune {
+	if index < 0 || index > len(s)-1 {
+		return s
+	}
+
+	result := s[:index:index]
+	result = append(result, s[index+1:]...)
+	return result
+}
+
+// n < 0 delete all element
+func (it runeType) DeleteN(s []rune, element rune, n int) []rune {
+	for i := 0; n <= 0 || i < n; i++ {
+		index := it.IndexOf(s, element)
+		if index < 0 {
+			return s
+		}
+
+		s = it.DeleteByIndex(s, index)
+	}
+	return s
 }
