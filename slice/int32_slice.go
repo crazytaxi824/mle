@@ -1,12 +1,12 @@
 // Package slice - compare two slice
 package slice
 
-type int64Type struct{}
+type int32Type struct{}
 
-func Int64() int64Type { return int64Type{} }
+func Int32() int32Type { return int32Type{} }
 
 // first index of element
-func (int64Type) IndexOf(s []int64, element int64) int {
+func (int32Type) IndexOf(s []int32, element int32) int {
 	for k := range s {
 		if s[k] == element {
 			return k
@@ -16,7 +16,7 @@ func (int64Type) IndexOf(s []int64, element int64) int {
 }
 
 // last index of element
-func (int64Type) LastIndexOf(s []int64, element int64) int {
+func (int32Type) LastIndexOf(s []int32, element int32) int {
 	if len(s) < 1 {
 		return -1
 	}
@@ -30,7 +30,7 @@ func (int64Type) LastIndexOf(s []int64, element int64) int {
 }
 
 // is A == B ?
-func (int64Type) Equal(a, b []int64) bool {
+func (int32Type) Equal(a, b []int32) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -44,7 +44,7 @@ func (int64Type) Equal(a, b []int64) bool {
 }
 
 // is A contains all elements of SUB ?
-func (it int64Type) Contains(a, sub []int64) bool {
+func (it int32Type) Contains(a, sub []int32) bool {
 	for k := range sub {
 		if it.IndexOf(a, sub[k]) == -1 {
 			return false
@@ -54,7 +54,7 @@ func (it int64Type) Contains(a, sub []int64) bool {
 }
 
 // is A contains any element of SUB ?
-func (int64Type) ContainsAny(a, sub []int64) bool {
+func (int32Type) ContainsAny(a, sub []int32) bool {
 	for ka := range a {
 		for kb := range sub {
 			if a[ka] == sub[kb] {

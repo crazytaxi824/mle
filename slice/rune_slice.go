@@ -1,12 +1,12 @@
 // Package slice - compare two slice
 package slice
 
-type int64Type struct{}
+type runeType struct{}
 
-func Int64() int64Type { return int64Type{} }
+func Rune() runeType { return runeType{} }
 
 // first index of element
-func (int64Type) IndexOf(s []int64, element int64) int {
+func (runeType) IndexOf(s []rune, element rune) int {
 	for k := range s {
 		if s[k] == element {
 			return k
@@ -16,7 +16,7 @@ func (int64Type) IndexOf(s []int64, element int64) int {
 }
 
 // last index of element
-func (int64Type) LastIndexOf(s []int64, element int64) int {
+func (runeType) LastIndexOf(s []rune, element rune) int {
 	if len(s) < 1 {
 		return -1
 	}
@@ -30,7 +30,7 @@ func (int64Type) LastIndexOf(s []int64, element int64) int {
 }
 
 // is A == B ?
-func (int64Type) Equal(a, b []int64) bool {
+func (runeType) Equal(a, b []rune) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -44,7 +44,7 @@ func (int64Type) Equal(a, b []int64) bool {
 }
 
 // is A contains all elements of SUB ?
-func (it int64Type) Contains(a, sub []int64) bool {
+func (it runeType) Contains(a, sub []rune) bool {
 	for k := range sub {
 		if it.IndexOf(a, sub[k]) == -1 {
 			return false
@@ -54,7 +54,7 @@ func (it int64Type) Contains(a, sub []int64) bool {
 }
 
 // is A contains any element of SUB ?
-func (int64Type) ContainsAny(a, sub []int64) bool {
+func (runeType) ContainsAny(a, sub []rune) bool {
 	for ka := range a {
 		for kb := range sub {
 			if a[ka] == sub[kb] {
