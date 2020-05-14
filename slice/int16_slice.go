@@ -1,10 +1,10 @@
 package slice
 
-type int16Type struct{}
+type int64Type struct{}
 
-func Int16() int16Type { return int16Type{} }
+func Int16() int64Type { return int64Type{} }
 
-func (int16Type) IndexOf(s []int16, n int16) int {
+func (int64Type) IndexOf(s []int64, n int64) int {
 	for k := range s {
 		if s[k] == n {
 			return k
@@ -13,7 +13,7 @@ func (int16Type) IndexOf(s []int16, n int16) int {
 	return -1
 }
 
-func (int16Type) LastIndexOf(s []int16, n int16) int {
+func (int64Type) LastIndexOf(s []int64, n int64) int {
 	if len(s) < 1 {
 		return -1
 	}
@@ -27,7 +27,7 @@ func (int16Type) LastIndexOf(s []int16, n int16) int {
 }
 
 // Equal 两个slice完全相同, 元素顺序也相同
-func (int16Type) Equal(a, b []int16) bool {
+func (int64Type) Equal(a, b []int64) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -41,12 +41,12 @@ func (int16Type) Equal(a, b []int16) bool {
 }
 
 // SameElements 两个slice元素相同，不要求顺序，但是重复次数必须相同
-func (int16Type) SameElements(a, b []int16) bool {
+func (int64Type) SameElements(a, b []int64) bool {
 	if len(a) != len(b) {
 		return false
 	}
 
-	tmp := make(map[int16]int, len(a))
+	tmp := make(map[int64]int, len(a))
 	for _, v := range a {
 		tmp[v]++
 	}
@@ -62,8 +62,8 @@ func (int16Type) SameElements(a, b []int16) bool {
 }
 
 // Contains a包含b中的所有元素，不考虑顺序和重复次数
-func (int16Type) Contains(a, b []int16) bool {
-	tmp := make(map[int16]struct{}, len(a))
+func (int64Type) Contains(a, b []int64) bool {
+	tmp := make(map[int64]struct{}, len(a))
 	for _, v := range a {
 		tmp[v] = struct{}{}
 	}
@@ -76,9 +76,35 @@ func (int16Type) Contains(a, b []int16) bool {
 	return true
 }
 
+func (int64Type) Contains2(a, b []int64) bool {
+	if len(a) <= len(b) {
+		tmp := make(map[int64]struct{}, len(a))
+		for _, v := range a {
+			tmp[v] = struct{}{}
+		}
+
+		for _, v := range b {
+			if _, ok := tmp[v]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+
+	tmp := make(map[int64]struct{}, len(b))
+	for _, v := range b {
+		tmp[v] = struct{}{}
+	}
+
+	for _, v := range a {
+		delete(tmp, v)
+	}
+	return len(tmp) == 0
+}
+
 // // Contains any of the elements
-// func (int16Type) ContainsAny(a, b []int16) bool {
-// 	tmp := make(map[int16]struct{})
+// func (int64Type) ContainsAny(a, b []int64) bool {
+// 	tmp := make(map[int64]struct{})
 // 	for _, v := range a {
 // 		tmp[v] = struct{}{}
 // 	}
@@ -92,13 +118,13 @@ func (int16Type) Contains(a, b []int16) bool {
 // }
 //
 // // Intersection 交集 a & b，return elements in a and b at same time
-// func (int16Type) Intersection(a, b []int16) []int16 {
-// 	tmp := make(map[int16]struct{})
+// func (int64Type) Intersection(a, b []int64) []int64 {
+// 	tmp := make(map[int64]struct{})
 // 	for _, v := range a {
 // 		tmp[v] = struct{}{}
 // 	}
 //
-// 	var result []int16
+// 	var result []int64
 // 	for _, v := range b {
 // 		if _, ok := tmp[v]; ok {
 // 			result = append(result, v)
@@ -109,8 +135,8 @@ func (int16Type) Contains(a, b []int16) bool {
 // }
 //
 // // Union 并集 a | b, return elements in a or in b
-// func (int16Type) Union(a, b []int16) []int16 {
-// 	tmp := make(map[int16]struct{})
+// func (int64Type) Union(a, b []int64) []int64 {
+// 	tmp := make(map[int64]struct{})
 // 	for _, v := range a {
 // 		tmp[v] = struct{}{}
 // 	}
@@ -119,7 +145,7 @@ func (int16Type) Contains(a, b []int16) bool {
 // 		tmp[v] = struct{}{}
 // 	}
 //
-// 	var result []int16
+// 	var result []int64
 // 	for k := range tmp {
 // 		result = append(result, k)
 // 	}
@@ -128,8 +154,8 @@ func (int16Type) Contains(a, b []int16) bool {
 // }
 //
 // // Difference 差集 a - diff, return elements in a but not in diff
-// func (int16Type) Difference(a, diff []int16) []int16 {
-// 	tmp := make(map[int16]struct{})
+// func (int64Type) Difference(a, diff []int64) []int64 {
+// 	tmp := make(map[int64]struct{})
 // 	for _, v := range a {
 // 		tmp[v] = struct{}{}
 // 	}
@@ -138,7 +164,7 @@ func (int16Type) Contains(a, b []int16) bool {
 // 		delete(tmp, v)
 // 	}
 //
-// 	var result []int16
+// 	var result []int64
 // 	for k := range tmp {
 // 		result = append(result, k)
 // 	}
@@ -147,8 +173,8 @@ func (int16Type) Contains(a, b []int16) bool {
 // }
 //
 // // SymmetricDifference 对称差集, elements in a or in b, but not in a&b
-// func (int16Type) SymmetricDifference(a, b []int16) []int16 {
-// 	tmp := make(map[int16]struct{})
+// func (int64Type) SymmetricDifference(a, b []int64) []int64 {
+// 	tmp := make(map[int64]struct{})
 // 	for _, v := range a {
 // 		tmp[v] = struct{}{}
 // 	}
@@ -161,7 +187,7 @@ func (int16Type) Contains(a, b []int16) bool {
 // 		}
 // 	}
 //
-// 	var result []int16
+// 	var result []int64
 // 	for k := range tmp {
 // 		result = append(result, k)
 // 	}
