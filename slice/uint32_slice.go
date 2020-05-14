@@ -54,13 +54,54 @@ func (it uint32Type) Contains(a, sub []uint32) bool {
 }
 
 // is A contains any element of SUB ?
-func (uint32Type) ContainsAny(a, sub []uint32) bool {
-	for ka := range a {
-		for kb := range sub {
-			if a[ka] == sub[kb] {
-				return true
-			}
+func (it uint32Type) ContainsAny(a, sub []uint32) bool {
+	for k := range sub {
+		if it.IndexOf(a, sub[k]) != -1 {
+			return true
 		}
 	}
 	return false
+}
+
+// insert element in the certain index
+func (uint32Type) Insert(s []uint32, element uint32, index int) []uint32 {
+	if index < 0 {
+		index = 0
+	}
+
+	lenS := len(s)
+	if index >= lenS {
+		s = append(s, element)
+		return s
+	}
+
+	result := s[:index:index]
+	result = append(result, element)
+	result = append(result, s[index:]...)
+
+	return result
+}
+
+// delete by index
+func (uint32Type) DeleteByIndex(s []uint32, index int) []uint32 {
+	if index < 0 || index > len(s)-1 {
+		return s
+	}
+
+	result := s[:index:index]
+	result = append(result, s[index+1:]...)
+	return result
+}
+
+// n < 0 delete all element
+func (it uint32Type) DeleteN(s []uint32, element uint32, n int) []uint32 {
+	for i := 0; n <= 0 || i < n; i++ {
+		index := it.IndexOf(s, element)
+		if index < 0 {
+			return s
+		}
+
+		s = it.DeleteByIndex(s, index)
+	}
+	return s
 }
