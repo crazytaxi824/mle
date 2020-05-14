@@ -93,7 +93,7 @@ func (int16Type) DeleteByIndex(s []int16, index int) []int16 {
 	return result
 }
 
-// n < 0 delete all element
+// n <= 0 delete all element
 func (it int16Type) DeleteN(s []int16, element int16, n int) []int16 {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)

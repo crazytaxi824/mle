@@ -93,7 +93,7 @@ func (uint64Type) DeleteByIndex(s []uint64, index int) []uint64 {
 	return result
 }
 
-// n < 0 delete all element
+// n <= 0 delete all element
 func (it uint64Type) DeleteN(s []uint64, element uint64, n int) []uint64 {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)
