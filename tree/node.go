@@ -7,18 +7,21 @@ import (
 // true - add to leftChild , false add to rightChild
 func (n *node) addNode(value interface{}, order int, isLeftChild bool) {
 	newChild := &node{
-		parent:      n,
-		isLeftChild: isLeftChild,
-		value:       value,
-		order:       order,
-		depth:       1,
-		tree:        n.tree,
+		parent: n,
+		value:  value,
+		order:  order,
+		depth:  1,
+		tree:   n.tree,
 	}
 	if isLeftChild {
 		n.leftChild = newChild
 	} else {
 		n.rightChild = newChild
 	}
+}
+
+func (n *node) isLeftChild() bool {
+	return n.order < n.parent.order
 }
 
 func (n *node) calBalance() int {

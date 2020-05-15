@@ -9,7 +9,6 @@ func reBoundNodes(parent, child *node, isLeftChild bool) {
 
 	if child != nil {
 		child.parent = parent
-		child.isLeftChild = isLeftChild
 	}
 }
 
@@ -26,7 +25,7 @@ func (n *node) rightRotate() {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
 	} else {
-		reBoundNodes(grandFather, newParent, n.isLeftChild)
+		reBoundNodes(grandFather, newParent, n.isLeftChild())
 	}
 
 	reBoundNodes(newParent, newRightChild, false)
@@ -50,7 +49,7 @@ func (n *node) rightLeftRotate() {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
 	} else {
-		reBoundNodes(grandFather, newParent, n.isLeftChild)
+		reBoundNodes(grandFather, newParent, n.isLeftChild())
 	}
 
 	reBoundNodes(newParent, newLeftChild, true)
@@ -72,7 +71,7 @@ func (n *node) leftRotate() {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
 	} else {
-		reBoundNodes(grandFather, newParent, n.isLeftChild)
+		reBoundNodes(grandFather, newParent, n.isLeftChild())
 	}
 
 	reBoundNodes(newParent, newLeftChild, true)
@@ -96,7 +95,7 @@ func (n *node) leftRightRotate() {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
 	} else {
-		reBoundNodes(grandFather, newParent, n.isLeftChild)
+		reBoundNodes(grandFather, newParent, n.isLeftChild())
 	}
 
 	reBoundNodes(newParent, newRightChild, false)
