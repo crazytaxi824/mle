@@ -20,7 +20,9 @@ func (n *node) addNode(value interface{}, order int, isLeftChild bool) {
 	}
 }
 
+// 判断自己是left child 还是 right child
 func (n *node) isLeftChild() bool {
+	// 内部使用，如果是 root 节点会 panic
 	return n.order < n.parent.order
 }
 
@@ -82,22 +84,32 @@ func (n *node) updateDepth() *node {
 	return nil
 }
 
+// return node's value
 func (n *node) Value() interface{} {
 	return n.value
 }
 
+// return node's order
 func (n *node) Order() int {
 	return n.order
 }
 
+// return node's depth
+func (n *node) Depth() int {
+	return n.depth
+}
+
+// could be nil
 func (n *node) LeftChild() *node {
 	return n.leftChild
 }
 
+// could be nil
 func (n *node) RightChild() *node {
 	return n.rightChild
 }
 
+// if node is root , it will return nil
 func (n *node) Parent() *node {
 	return n.parent
 }

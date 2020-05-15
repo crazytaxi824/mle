@@ -95,6 +95,7 @@ func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
 	return result, isLeftNode, nil
 }
 
+// could be nil if the order is not exist
 func (avl *AVLTree) Find(order int) *node {
 	var result *node
 
