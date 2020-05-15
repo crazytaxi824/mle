@@ -10,7 +10,6 @@ const (
 
 type node struct {
 	parent                *node       // 上级节点
-	isLeftChild           bool        // true- 上级节点的左边叶子，false - 上级节点的右边叶子
 	leftChild, rightChild *node       // 左右节点
 	depth                 int         // 自己的深度，最下层默认为1
 	value                 interface{} // 内容
@@ -37,14 +36,13 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
 		avl.root = &node{
-			parent:      nil,
-			isLeftChild: false,
-			leftChild:   nil,
-			rightChild:  nil,
-			depth:       1,
-			value:       value,
-			order:       order,
-			tree:        avl,
+			parent:     nil,
+			leftChild:  nil,
+			rightChild: nil,
+			depth:      1,
+			value:      value,
+			order:      order,
+			tree:       avl,
 		}
 		avl.length = 1
 		return nil

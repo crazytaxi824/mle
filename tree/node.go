@@ -7,18 +7,21 @@ import (
 // true - add to leftChild , false add to rightChild
 func (n *node) addNode(value interface{}, order int, isLeftChild bool) {
 	newChild := &node{
-		parent:      n,
-		isLeftChild: isLeftChild,
-		value:       value,
-		order:       order,
-		depth:       1,
-		tree:        n.tree,
+		parent: n,
+		value:  value,
+		order:  order,
+		depth:  1,
+		tree:   n.tree,
 	}
 	if isLeftChild {
 		n.leftChild = newChild
 	} else {
 		n.rightChild = newChild
 	}
+}
+
+func (n *node) isLeftChild() bool {
+	return n.order < n.parent.order
 }
 
 func (n *node) calBalance() int {
@@ -87,11 +90,11 @@ func (n *node) Order() int {
 	return n.order
 }
 
-func (n *node) Left() *node {
+func (n *node) LeftChild() *node {
 	return n.leftChild
 }
 
-func (n *node) Right() *node {
+func (n *node) RightChild() *node {
 	return n.rightChild
 }
 
@@ -101,4 +104,26 @@ func (n *node) Parent() *node {
 
 func (n *node) Tree() *AVLTree {
 	return n.tree
+}
+
+// left child -> right child -> right child -> right child...
+func (n *node) LargestLeftTree() *node {
+	var result *node
+	loop := n.leftChild
+	for loop != nil {
+		result = loop
+		loop = loop.rightChild
+	}
+	return result
+}
+
+// right child -> left child -> left child -> left child...
+func (n *node) SmallestRightTree() *node {
+	var result *node
+	loop := n.rightChild
+	for loop != nil {
+		result = loop
+		loop = loop.leftChild
+	}
+	return result
 }
