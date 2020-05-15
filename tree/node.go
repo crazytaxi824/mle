@@ -102,3 +102,25 @@ func (n *node) Parent() *node {
 func (n *node) Tree() *AVLTree {
 	return n.tree
 }
+
+// left child -> right child -> right child -> right child...
+func (n *node) LargestLeftTree() *node {
+	var result *node
+	loop := n.leftChild
+	for loop != nil {
+		result = loop
+		loop = loop.rightChild
+	}
+	return result
+}
+
+// right child -> left child -> left child -> left child...
+func (n *node) SmallestRightTree() *node {
+	var result *node
+	loop := n.rightChild
+	for loop != nil {
+		result = loop
+		loop = loop.leftChild
+	}
+	return result
+}
