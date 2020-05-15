@@ -2,6 +2,7 @@ package util
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"math/big"
 	frand "math/rand"
 	"strconv"
@@ -23,5 +24,6 @@ func NewFakeRand() *frand.Rand {
 
 // 返回长度为 n 的 string
 func RandString(fr *frand.Rand) string {
-	return strconv.FormatInt(fr.Int63n(1<<63-1), 16)
+	s := base64.StdEncoding.EncodeToString([]byte(strconv.FormatInt(fr.Int63n(1<<63-1), 16)))
+	return s[:len(s)-2]
 }
