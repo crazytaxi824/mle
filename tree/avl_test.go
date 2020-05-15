@@ -21,9 +21,43 @@ func TestAVLTree_Add(t *testing.T) {
 	PrintAllNode(tree.root)
 
 	n := tree.Find(82)
-	if n != nil {
-		t.Log(n.Order(), n.Value())
-	} else {
-		t.Log("nil")
+	if n == nil {
+		t.Fail()
 	}
+}
+
+func BenchmarkSlice(b *testing.B) {
+	ss := make([]int, 1000)
+	for i := 0; i < 1000; i++ {
+		ss[i] = i
+	}
+
+	for i := 0; i < b.N; i++ {
+		for _, v := range ss {
+			if v == 900 {
+
+			}
+		}
+	}
+	b.ReportAllocs()
+}
+
+func BenchmarkAVLTree(b *testing.B) {
+	tree := NewAVLTree()
+	for i := 0; i < 1000; i++ {
+		err := tree.Add(i, i)
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+
+	for i := 0; i < b.N; i++ {
+		n := tree.Find(900)
+		_, ok := n.value.(int)
+		if !ok {
+			b.Fail()
+		}
+	}
+	b.ReportAllocs()
 }

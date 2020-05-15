@@ -87,11 +87,11 @@ func (n *node) Order() int {
 	return n.order
 }
 
-func (n *node) Left() *node {
+func (n *node) LeftChild() *node {
 	return n.leftChild
 }
 
-func (n *node) Right() *node {
+func (n *node) RightChild() *node {
 	return n.rightChild
 }
 
