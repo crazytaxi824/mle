@@ -5,12 +5,12 @@ import (
 	"errors"
 )
 
-type hashSetUint32 struct {
+type uint32HashSet struct {
 	elements map[uint32]struct{}
 }
 
-func NewUint32Set(n ...uint32) *hashSetUint32 {
-	var s hashSetUint32
+func NewUint32Set(n ...uint32) *uint32HashSet {
+	var s uint32HashSet
 	s.elements = make(map[uint32]struct{})
 	for _, v := range n {
 		s.elements[v] = struct{}{}
@@ -19,12 +19,12 @@ func NewUint32Set(n ...uint32) *hashSetUint32 {
 }
 
 // add element
-func (s *hashSetUint32) Add(n uint32) {
+func (s *uint32HashSet) Add(n uint32) {
 	s.elements[n] = struct{}{}
 }
 
 // Pop random element
-func (s *hashSetUint32) Pop() (uint32, error) {
+func (s *uint32HashSet) Pop() (uint32, error) {
 	for k := range s.elements {
 		delete(s.elements, k)
 		return k, nil
@@ -33,17 +33,17 @@ func (s *hashSetUint32) Pop() (uint32, error) {
 }
 
 // Delete element
-func (s *hashSetUint32) Delete(element uint32) {
+func (s *uint32HashSet) Delete(element uint32) {
 	delete(s.elements, element)
 }
 
 // Length of set
-func (s *hashSetUint32) Len() int {
+func (s *uint32HashSet) Len() int {
 	return len(s.elements)
 }
 
 // for range the set
-func (s *hashSetUint32) Range(fn func(element uint32) bool) {
+func (s *uint32HashSet) Range(fn func(element uint32) bool) {
 	for k := range s.elements {
 		if !fn(k) {
 			return
@@ -52,7 +52,7 @@ func (s *hashSetUint32) Range(fn func(element uint32) bool) {
 }
 
 // ToSlice return slice
-func (s *hashSetUint32) ToSlice() []uint32 {
+func (s *uint32HashSet) ToSlice() []uint32 {
 	result := make([]uint32, len(s.elements))
 	var count int
 	for i := range s.elements {
@@ -63,12 +63,13 @@ func (s *hashSetUint32) ToSlice() []uint32 {
 }
 
 // Contains element
-func (s *hashSetUint32) Contains(n uint32, m ...uint32) bool {
-	if _, ok := s.elements[n]; !ok {
-		return false
-	}
+func (s *uint32HashSet) Contains(n uint32) bool {
+	_, ok := s.elements[n]
+	return ok
+}
 
-	for _, v := range m {
+func (s *uint32HashSet) ContainsN(n []uint32) bool {
+	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {
 			return false
 		}
@@ -76,13 +77,22 @@ func (s *hashSetUint32) Contains(n uint32, m ...uint32) bool {
 	return true
 }
 
+func (s *uint32HashSet) ContainsAny(n []uint32) bool {
+	for _, v := range n {
+		if _, ok := s.elements[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Reset the set
-func (s *hashSetUint32) Reset() {
+func (s *uint32HashSet) Reset() {
 	s.elements = make(map[uint32]struct{})
 }
 
 // Equal, elements
-func (s *hashSetUint32) Equal(h *hashSetUint32) bool {
+func (s *uint32HashSet) Equal(h *uint32HashSet) bool {
 	if s.Len() != h.Len() {
 		return false
 	}

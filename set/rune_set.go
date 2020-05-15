@@ -5,13 +5,13 @@ import (
 	"errors"
 )
 
-type int32HashSet struct {
-	elements map[int32]struct{}
+type runeHashSet struct {
+	elements map[rune]struct{}
 }
 
-func NewInt32Set(n ...int32) *int32HashSet {
-	var s int32HashSet
-	s.elements = make(map[int32]struct{})
+func NewRuneSet(n ...rune) *runeHashSet {
+	var s runeHashSet
+	s.elements = make(map[rune]struct{})
 	for _, v := range n {
 		s.elements[v] = struct{}{}
 	}
@@ -19,12 +19,12 @@ func NewInt32Set(n ...int32) *int32HashSet {
 }
 
 // add element
-func (s *int32HashSet) Add(n int32) {
+func (s *runeHashSet) Add(n rune) {
 	s.elements[n] = struct{}{}
 }
 
 // Pop random element
-func (s *int32HashSet) Pop() (int32, error) {
+func (s *runeHashSet) Pop() (rune, error) {
 	for k := range s.elements {
 		delete(s.elements, k)
 		return k, nil
@@ -33,17 +33,17 @@ func (s *int32HashSet) Pop() (int32, error) {
 }
 
 // Delete element
-func (s *int32HashSet) Delete(element int32) {
+func (s *runeHashSet) Delete(element rune) {
 	delete(s.elements, element)
 }
 
 // Length of set
-func (s *int32HashSet) Len() int {
+func (s *runeHashSet) Len() int {
 	return len(s.elements)
 }
 
 // for range the set
-func (s *int32HashSet) Range(fn func(element int32) bool) {
+func (s *runeHashSet) Range(fn func(element rune) bool) {
 	for k := range s.elements {
 		if !fn(k) {
 			return
@@ -52,8 +52,8 @@ func (s *int32HashSet) Range(fn func(element int32) bool) {
 }
 
 // ToSlice return slice
-func (s *int32HashSet) ToSlice() []int32 {
-	result := make([]int32, len(s.elements))
+func (s *runeHashSet) ToSlice() []rune {
+	result := make([]rune, len(s.elements))
 	var count int
 	for i := range s.elements {
 		result[count] = i
@@ -63,12 +63,12 @@ func (s *int32HashSet) ToSlice() []int32 {
 }
 
 // Contains element
-func (s *int32HashSet) Contains(n int32) bool {
+func (s *runeHashSet) Contains(n rune) bool {
 	_, ok := s.elements[n]
 	return ok
 }
 
-func (s *int32HashSet) ContainsN(n []int32) bool {
+func (s *runeHashSet) ContainsN(n []rune) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {
 			return false
@@ -77,7 +77,7 @@ func (s *int32HashSet) ContainsN(n []int32) bool {
 	return true
 }
 
-func (s *int32HashSet) ContainsAny(n []int32) bool {
+func (s *runeHashSet) ContainsAny(n []rune) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; ok {
 			return true
@@ -87,18 +87,18 @@ func (s *int32HashSet) ContainsAny(n []int32) bool {
 }
 
 // Reset the set
-func (s *int32HashSet) Reset() {
-	s.elements = make(map[int32]struct{})
+func (s *runeHashSet) Reset() {
+	s.elements = make(map[rune]struct{})
 }
 
 // Equal, elements
-func (s *int32HashSet) Equal(h *int32HashSet) bool {
+func (s *runeHashSet) Equal(h *runeHashSet) bool {
 	if s.Len() != h.Len() {
 		return false
 	}
 
 	var mark = true
-	h.Range(func(elem int32) bool {
+	h.Range(func(elem rune) bool {
 		if s.Contains(elem) {
 			return true
 		}

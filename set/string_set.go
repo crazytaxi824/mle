@@ -5,12 +5,12 @@ import (
 	"errors"
 )
 
-type hashSetString struct {
+type stringHashSet struct {
 	elements map[string]struct{}
 }
 
-func NewStringSet(n ...string) *hashSetString {
-	var s hashSetString
+func NewStringSet(n ...string) *stringHashSet {
+	var s stringHashSet
 	s.elements = make(map[string]struct{})
 	for _, v := range n {
 		s.elements[v] = struct{}{}
@@ -19,12 +19,12 @@ func NewStringSet(n ...string) *hashSetString {
 }
 
 // add element
-func (s *hashSetString) Add(n string) {
+func (s *stringHashSet) Add(n string) {
 	s.elements[n] = struct{}{}
 }
 
 // Pop random element
-func (s *hashSetString) Pop() (string, error) {
+func (s *stringHashSet) Pop() (string, error) {
 	for k := range s.elements {
 		delete(s.elements, k)
 		return k, nil
@@ -33,17 +33,17 @@ func (s *hashSetString) Pop() (string, error) {
 }
 
 // Delete element
-func (s *hashSetString) Delete(element string) {
+func (s *stringHashSet) Delete(element string) {
 	delete(s.elements, element)
 }
 
 // Length of set
-func (s *hashSetString) Len() int {
+func (s *stringHashSet) Len() int {
 	return len(s.elements)
 }
 
 // for range the set
-func (s *hashSetString) Range(fn func(element string) bool) {
+func (s *stringHashSet) Range(fn func(element string) bool) {
 	for k := range s.elements {
 		if !fn(k) {
 			return
@@ -52,7 +52,7 @@ func (s *hashSetString) Range(fn func(element string) bool) {
 }
 
 // ToSlice return slice
-func (s *hashSetString) ToSlice() []string {
+func (s *stringHashSet) ToSlice() []string {
 	result := make([]string, len(s.elements))
 	var count int
 	for i := range s.elements {
@@ -63,12 +63,13 @@ func (s *hashSetString) ToSlice() []string {
 }
 
 // Contains element
-func (s *hashSetString) Contains(n string, m ...string) bool {
-	if _, ok := s.elements[n]; !ok {
-		return false
-	}
+func (s *stringHashSet) Contains(n string) bool {
+	_, ok := s.elements[n]
+	return ok
+}
 
-	for _, v := range m {
+func (s *stringHashSet) ContainsN(n []string) bool {
+	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {
 			return false
 		}
@@ -76,13 +77,22 @@ func (s *hashSetString) Contains(n string, m ...string) bool {
 	return true
 }
 
+func (s *stringHashSet) ContainsAny(n []string) bool {
+	for _, v := range n {
+		if _, ok := s.elements[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
 // Reset the set
-func (s *hashSetString) Reset() {
+func (s *stringHashSet) Reset() {
 	s.elements = make(map[string]struct{})
 }
 
 // Equal, elements
-func (s *hashSetString) Equal(h *hashSetString) bool {
+func (s *stringHashSet) Equal(h *stringHashSet) bool {
 	if s.Len() != h.Len() {
 		return false
 	}

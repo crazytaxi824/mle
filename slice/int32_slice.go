@@ -93,7 +93,7 @@ func (int32Type) DeleteByIndex(s []int32, index int) []int32 {
 	return result
 }
 
-// n < 0 delete all element
+// n <= 0 delete all element
 func (it int32Type) DeleteN(s []int32, element int32, n int) []int32 {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)

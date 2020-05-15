@@ -93,7 +93,7 @@ func (runeType) DeleteByIndex(s []rune, index int) []rune {
 	return result
 }
 
-// n < 0 delete all element
+// n <= 0 delete all element
 func (it runeType) DeleteN(s []rune, element rune, n int) []rune {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)

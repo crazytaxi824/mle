@@ -93,7 +93,7 @@ func (stringType) DeleteByIndex(s []string, index int) []string {
 	return result
 }
 
-// n < 0 delete all element
+// n <= 0 delete all element
 func (it stringType) DeleteN(s []string, element string, n int) []string {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)
