@@ -16,7 +16,7 @@ func BenchmarkHashSet_ToSlice(b *testing.B) {
 func BenchmarkHashSetInt16_Contains(b *testing.B) {
 	set := NewInt16Set(1, 2, 3, 4, 5)
 	for i := 0; i < b.N; i++ {
-		set.Contains(1, 2, 3)
+		set.Contains(1)
 	}
 	b.ReportAllocs()
 }
