@@ -60,7 +60,7 @@ func (n *node) balanceFactor() error {
 		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
 			n.rightLeftRotate()
 		} else {
-			return errors.New("some thing wrong")
+			return errors.New("balance factor err: the left Child is balanced")
 		}
 	case balanceFactor < -1: // 右边长
 		if n.rightChild.calBalance() < 0 { // 左旋
@@ -68,7 +68,7 @@ func (n *node) balanceFactor() error {
 		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
 			n.leftRightRotate()
 		} else {
-			return errors.New("some thing wrong")
+			return errors.New("balance factor err: the right Child is balanced")
 		}
 	}
 	return nil

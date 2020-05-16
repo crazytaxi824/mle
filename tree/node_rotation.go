@@ -19,8 +19,6 @@ func (n *node) rightRightRotate() {
 	newRightChild := n
 	oldRightChild := newParent.rightChild
 
-	n.depth--
-
 	if grandFather == nil { // is the root
 		n.tree.root = newParent
 		n.tree.root.parent = nil
@@ -41,10 +39,6 @@ func (n *node) rightLeftRotate() {
 	oldRightChild := newParent.rightChild
 	oldLeftChild := newParent.leftChild
 
-	newParent.depth++
-	n.depth--
-	n.leftChild.depth--
-
 	if grandFather == nil {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
@@ -56,6 +50,9 @@ func (n *node) rightLeftRotate() {
 	reBoundNodes(newParent, newRightChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
+
+	// 重新计算 left child 的深度
+	newLeftChild.updateDepth()
 }
 
 // 左旋
@@ -64,8 +61,6 @@ func (n *node) leftLeftRotate() {
 	newParent := n.rightChild
 	newLeftChild := n
 	oldLeftChild := newParent.leftChild
-
-	n.depth--
 
 	if grandFather == nil {
 		n.tree.root = newParent
@@ -87,10 +82,6 @@ func (n *node) leftRightRotate() {
 	oldLeftChild := newParent.leftChild
 	oldRightChild := newParent.rightChild
 
-	newParent.depth++
-	n.depth--
-	n.rightChild.depth--
-
 	if grandFather == nil {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
@@ -102,4 +93,40 @@ func (n *node) leftRightRotate() {
 	reBoundNodes(newParent, newLeftChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
+
+	// 重新计算 right child 的深度
+	newRightChild.updateDepth()
 }
+
+// R0 旋转
+// node.balance > 1 && node.leftChild.balance == 0
+func (n *node) r0r1Rotation() {
+	grandFather := n.parent
+	newParent := n.leftChild
+	newRightChild := n
+	oldRightChild := newParent.rightChild
+
+	// n.depth--
+
+	if grandFather == nil { // is the root
+		n.tree.root = newParent
+		n.tree.root.parent = nil
+	} else {
+		reBoundNodes(grandFather, newParent, n.isLeftChild())
+	}
+
+	reBoundNodes(newParent, newRightChild, false)
+	reBoundNodes(newRightChild, oldRightChild, true)
+}
+
+// R1 旋转
+// node.balance > 1 && node.leftChild.balance == 1
+
+// R-1 旋转
+// node.balance > 1 && node.leftChild.balance == -1
+
+// L0 旋转
+
+// L1 旋转
+
+// L-1 旋转
