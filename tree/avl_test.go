@@ -41,11 +41,11 @@ func TestAVLTree_Delete(t *testing.T) {
 		}
 	}
 
-	err := tree.Delete(40)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	_ = tree.DeleteFromOrder(84)
+	_ = tree.DeleteFromOrder(85)
+	_ = tree.DeleteFromOrder(120)
+	_ = tree.DeleteFromOrder(87)
+	_ = tree.DeleteFromOrder(86)
 
 	PrintAllNode(tree.root)
 }

@@ -55,40 +55,8 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	parent.addNewChild(value, order, isLeftChild)
 	avl.length++
 
-	for parent != nil { // TODO 可以优化不用一直检测到root
-		// balance factor
-		err = parent.balanceFactor(true)
-		if err != nil {
-			return err
-		}
-
-		parent = parent.updateDepth()
-	}
-
-	return nil
-}
-
-// true - add to leftChild , false add to rightChild
-func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
-	var result *node
-	var isLeftNode bool
-
-	for loop := avl.root; loop != nil; {
-		if order == loop.order {
-			return nil, false, errors.New(ExistNodeErr)
-		}
-
-		if order < loop.order { // left
-			result = loop
-			loop = loop.leftChild
-			isLeftNode = true
-		} else { // right
-			result = loop
-			loop = loop.rightChild
-			isLeftNode = false
-		}
-	}
-	return result, isLeftNode, nil
+	// 计算是否需要 Re-balance
+	return avl.checkBalances(parent, true)
 }
 
 // could be nil if the order is not exist
@@ -107,7 +75,7 @@ func (avl *AVLTree) Find(order int) *node {
 }
 
 // delete node
-func (avl *AVLTree) Delete(order int) error {
+func (avl *AVLTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
 		return errors.New(NotExistNodeErr)
@@ -120,10 +88,6 @@ func (avl *AVLTree) Delete(order int) error {
 		// find replace
 		replaceNode := delNode.LargestLeftTree()
 
-		// 替换value，order，不替换 depth，left，right child
-		delNode.order = replaceNode.order
-		delNode.value = replaceNode.value
-
 		// 删除 replaceNode
 		parent = replaceNode.parent
 		if replaceNode.isLeftChild() {
@@ -131,6 +95,11 @@ func (avl *AVLTree) Delete(order int) error {
 		} else {
 			parent.rightChild = nil
 		}
+
+		// 替换value，order，不替换 depth，left，right child
+		delNode.order = replaceNode.order
+		delNode.value = replaceNode.value
+
 		replaceNode = nil
 
 	default:
@@ -161,17 +130,11 @@ func (avl *AVLTree) Delete(order int) error {
 	avl.length--
 
 	// 计算是否需要 Re-balance
-	for parent != nil {
-		// balance factor
-		err := parent.balanceFactor(false)
-		if err != nil {
-			return err
-		}
+	return avl.checkBalances(parent, false)
+}
 
-		parent = parent.updateDepth()
-	}
-
-	return nil
+func (avl *AVLTree) Delete(n *node) error {
+	return avl.DeleteFromOrder(n.order)
 }
 
 // 树的容量
