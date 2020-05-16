@@ -193,6 +193,19 @@ func (avl *AVLTree) Root() *node {
 }
 
 // 最小的元素
-// func (avl *AVLTree) Smallest() *node {
-// 	var samllest *node
-// }
+func (avl *AVLTree) Smallest() *node {
+	var smallest *node
+	for loop := avl.root; loop != nil; loop = loop.leftChild {
+		smallest = loop
+	}
+	return smallest
+}
+
+// 最大元素
+func (avl *AVLTree) Biggest() *node {
+	var biggest *node
+	for loop := avl.root; loop != nil; loop = loop.rightChild {
+		biggest = loop
+	}
+	return biggest
+}

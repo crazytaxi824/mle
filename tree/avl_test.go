@@ -24,6 +24,10 @@ func TestAVLTree_Add(t *testing.T) {
 	if n == nil {
 		t.Fail()
 	}
+
+	t.Log(tree.Root().Order())
+	t.Log(tree.Smallest().Order())
+	t.Log(tree.Biggest().Order())
 }
 
 // delete
@@ -99,7 +103,7 @@ func BenchmarkAppendInSlice(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var s []int
 		for n := 0; n < 1000; n++ {
-			s = append(s, n)
+			_ = append(s, n)
 		}
 	}
 	b.ReportAllocs()
