@@ -59,6 +59,23 @@ func TestAVLTree_Delete(t *testing.T) {
 	}
 }
 
+func TestAVLTree_Delete2(t *testing.T) {
+	ss := []int{100, 50, 150, 70, 30, 40, 20, 10, 25}
+	tree := NewAVLTree()
+	for _, v := range ss {
+		err := tree.Add(v, v)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	_ = tree.DeleteFromOrder(10)
+	_ = tree.DeleteFromOrder(40)
+
+	PrintAllNode(tree.root)
+}
+
 // sort
 func TestAVLTree_Sort(t *testing.T) {
 	tree := NewAVLTree()
