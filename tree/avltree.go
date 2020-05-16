@@ -33,7 +33,7 @@ func NewAVLTree(dupl ...bool) *AVLTree {
 	return &AVLTree{flag: flag}
 }
 
-// 添加 node
+// add node
 func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
@@ -112,6 +112,7 @@ func (avl *AVLTree) Find(order int) *node {
 	return result
 }
 
+// delete node
 func (avl *AVLTree) Delete(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {

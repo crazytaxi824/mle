@@ -49,8 +49,8 @@ func (n *node) calBalance() int {
 	return lDep - rDep
 }
 
-// 判断需要按照什么方式旋转
-func (n *node) balanceFactor(insert bool) error {
+// 判断需要按照什么方式旋转, is Add Node 表示是 Add node OR delete node 时使用该方法
+func (n *node) balanceFactor(isAddNode bool) error {
 	// cal balance factor
 	balanceFactor := n.calBalance()
 	switch {
@@ -60,7 +60,7 @@ func (n *node) balanceFactor(insert bool) error {
 		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
 			n.rightLeftRotate()
 		} else {
-			if insert {
+			if isAddNode {
 				return errors.New("balance factor err: the left Child is balanced")
 			}
 			n.rightRightRotate()
@@ -71,7 +71,7 @@ func (n *node) balanceFactor(insert bool) error {
 		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
 			n.leftRightRotate()
 		} else {
-			if insert {
+			if isAddNode {
 				return errors.New("balance factor err: the right Child is balanced")
 			}
 			n.leftLeftRotate()
