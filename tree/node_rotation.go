@@ -28,6 +28,9 @@ func (n *node) rightRightRotate() {
 
 	reBoundNodes(newParent, newRightChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
+
+	// 重置 new parent.depth
+	newParent.depth = 0
 }
 
 // RL R-1
@@ -53,6 +56,9 @@ func (n *node) rightLeftRotate() {
 
 	// 重新计算 left child 的深度
 	newLeftChild.updateDepth()
+
+	// 重置 new parent.depth
+	newParent.depth = 0
 }
 
 // LL L0 L1
@@ -71,6 +77,9 @@ func (n *node) leftLeftRotate() {
 
 	reBoundNodes(newParent, newLeftChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
+
+	// 重置 new parent.depth
+	newParent.depth = 0
 }
 
 // LR L-1
@@ -96,4 +105,7 @@ func (n *node) leftRightRotate() {
 
 	// 重新计算 right child 的深度
 	newRightChild.updateDepth()
+
+	// 重置 new parent.depth
+	newParent.depth = 0
 }

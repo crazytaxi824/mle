@@ -72,7 +72,7 @@ func (n *node) balanceFactor(isAddNode bool) error {
 	return nil
 }
 
-// return nil means it is the root node
+// return nil means it is the root node, or it needs to stop
 func (n *node) updateDepth() *node {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -81,6 +81,10 @@ func (n *node) updateDepth() *node {
 
 	if n.rightChild != nil {
 		rDep = n.rightChild.depth
+	}
+
+	if n.depth == max(lDep, rDep)+1 {
+		return nil
 	}
 
 	n.depth = max(lDep, rDep) + 1

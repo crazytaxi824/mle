@@ -5,6 +5,11 @@ func (n *node) Value() interface{} {
 	return n.value
 }
 
+// change Value
+func (n *node) ChangeValue(v interface{}) {
+	n.value = v
+}
+
 // return node's order
 func (n *node) Order() int {
 	return n.order
