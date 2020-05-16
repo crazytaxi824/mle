@@ -32,6 +32,7 @@ func NewAVLTree(dupl ...bool) *AVLTree {
 	return &AVLTree{flag: flag}
 }
 
+// 添加 node
 func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
@@ -49,23 +50,23 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	}
 
 	// whose child
-	whose, isLeftChild, err := avl.whoseChild(order)
+	parent, isLeftChild, err := avl.whoseChild(order)
 	if err != nil {
 		return err
 	}
 
 	// add node
-	whose.addNode(value, order, isLeftChild)
+	parent.addNode(value, order, isLeftChild)
 	avl.length++
 
-	for whose != nil {
+	for parent != nil { // TODO 可以优化不用一直检测到root
 		// balance factor
-		err = whose.balanceFactor()
+		err = parent.balanceFactor()
 		if err != nil {
 			return err
 		}
 
-		whose = whose.updateDepth()
+		parent = parent.updateDepth()
 	}
 
 	return nil
@@ -95,6 +96,7 @@ func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
 	return result, isLeftNode, nil
 }
 
+// could be nil if the order is not exist
 func (avl *AVLTree) Find(order int) *node {
 	var result *node
 

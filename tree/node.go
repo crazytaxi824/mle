@@ -20,10 +20,22 @@ func (n *node) addNode(value interface{}, order int, isLeftChild bool) {
 	}
 }
 
+// 判断自己是left child 还是 right child
 func (n *node) isLeftChild() bool {
+	// 内部使用，如果是 root 节点会 panic
 	return n.order < n.parent.order
 }
 
+// delete self from the tree
+func (n *node) deleteSelf() {
+	if n.isLeftChild() {
+		n.parent.leftChild = nil
+	} else {
+		n.parent.rightChild = nil
+	}
+}
+
+// 计算左右高度
 func (n *node) calBalance() int {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -37,6 +49,7 @@ func (n *node) calBalance() int {
 	return lDep - rDep
 }
 
+// 判断需要按照什么方式旋转
 func (n *node) balanceFactor() error {
 	// cal balance factor
 	balanceFactor := n.calBalance()
@@ -61,8 +74,7 @@ func (n *node) balanceFactor() error {
 	return nil
 }
 
-// return node indicate which node need to update its depth,
-// return nil means the depth update action of the tree stops here
+// return nil means it is the root node
 func (n *node) updateDepth() *node {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -73,35 +85,41 @@ func (n *node) updateDepth() *node {
 		rDep = n.rightChild.depth
 	}
 
-	maxDepth := max(lDep, rDep) + 1
-
-	if n.depth != maxDepth {
-		n.depth = maxDepth
-		return n.parent
-	}
-	return nil
+	n.depth = max(lDep, rDep) + 1
+	return n.parent
 }
 
+// return node's value
 func (n *node) Value() interface{} {
 	return n.value
 }
 
+// return node's order
 func (n *node) Order() int {
 	return n.order
 }
 
+// return node's depth
+func (n *node) Depth() int {
+	return n.depth
+}
+
+// could be nil
 func (n *node) LeftChild() *node {
 	return n.leftChild
 }
 
+// could be nil
 func (n *node) RightChild() *node {
 	return n.rightChild
 }
 
+// if node is root , it will return nil
 func (n *node) Parent() *node {
 	return n.parent
 }
 
+// node 所属 tree
 func (n *node) Tree() *AVLTree {
 	return n.tree
 }
