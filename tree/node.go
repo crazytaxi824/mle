@@ -50,7 +50,7 @@ func (n *node) calBalance() int {
 }
 
 // 判断需要按照什么方式旋转
-func (n *node) balanceFactor() error {
+func (n *node) balanceFactor(insert bool) error {
 	// cal balance factor
 	balanceFactor := n.calBalance()
 	switch {
@@ -60,7 +60,10 @@ func (n *node) balanceFactor() error {
 		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
 			n.rightLeftRotate()
 		} else {
-			return errors.New("balance factor err: the left Child is balanced")
+			if insert {
+				return errors.New("balance factor err: the left Child is balanced")
+			}
+			n.rightRightRotate()
 		}
 	case balanceFactor < -1: // 右边长
 		if n.rightChild.calBalance() < 0 { // 左旋
@@ -68,7 +71,10 @@ func (n *node) balanceFactor() error {
 		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
 			n.leftRightRotate()
 		} else {
-			return errors.New("balance factor err: the right Child is balanced")
+			if insert {
+				return errors.New("balance factor err: the right Child is balanced")
+			}
+			n.leftLeftRotate()
 		}
 	}
 	return nil

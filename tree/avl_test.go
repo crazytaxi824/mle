@@ -61,3 +61,22 @@ func BenchmarkAVLTree(b *testing.B) {
 	}
 	b.ReportAllocs()
 }
+
+func TestAVLTree_Delete(t *testing.T) {
+	tree := NewAVLTree()
+	for _, v := range s {
+		err := tree.Add(v, v)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	err := tree.Delete(84)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	PrintAllNode(tree.root)
+}

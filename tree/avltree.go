@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	ExistNodeErr = "the node is already exist"
+	ExistNodeErr    = "the node is already exist"
+	NotExistNodeErr = "the node is not in the tree"
 )
 
 type node struct {
@@ -61,7 +62,7 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 
 	for parent != nil { // TODO 可以优化不用一直检测到root
 		// balance factor
-		err = parent.balanceFactor()
+		err = parent.balanceFactor(true)
 		if err != nil {
 			return err
 		}
@@ -109,4 +110,113 @@ func (avl *AVLTree) Find(order int) *node {
 	}
 
 	return result
+}
+
+func (avl *AVLTree) Delete(order int) error {
+	delNode := avl.Find(order)
+	if delNode == nil {
+		return errors.New(NotExistNodeErr)
+	}
+
+	switch {
+	case delNode.leftChild == nil && delNode.rightChild == nil: // has no child
+		parent := delNode.parent
+
+		if parent == nil { // root
+			avl.root = nil
+			delNode = nil
+			return nil
+		}
+
+		// 删除自己
+		if delNode.isLeftChild() {
+			parent.leftChild = nil
+		} else {
+			parent.rightChild = nil
+		}
+		delNode = nil
+
+		// 重新balance
+		for parent != nil {
+			// balance factor
+			err := parent.balanceFactor(false)
+			if err != nil {
+				return err
+			}
+
+			parent = parent.updateDepth()
+		}
+	case delNode.leftChild != nil && delNode.rightChild == nil: // has left child
+		parent := delNode.parent
+
+		if parent == nil { // root
+			avl.root = delNode.leftChild
+			delNode = nil
+			return nil
+		}
+
+		reBoundNodes(parent, delNode.leftChild, delNode.isLeftChild())
+		delNode = nil
+
+		for parent != nil {
+			// balance factor
+			err := parent.balanceFactor(false)
+			if err != nil {
+				return err
+			}
+
+			parent = parent.updateDepth()
+		}
+
+	case delNode.leftChild == nil && delNode.rightChild != nil: // has right child
+		parent := delNode.parent
+
+		if parent == nil { // root
+			avl.root = delNode.rightChild
+			delNode = nil
+			return nil
+		}
+
+		reBoundNodes(parent, delNode.rightChild, delNode.isLeftChild())
+		delNode = nil
+
+		for parent != nil {
+			// balance factor
+			err := parent.balanceFactor(false)
+			if err != nil {
+				return err
+			}
+
+			parent = parent.updateDepth()
+		}
+
+	case delNode.leftChild != nil && delNode.rightChild != nil: // has both child
+		// find replace
+		replaceNode := delNode.LargestLeftTree()
+
+		// 替换value，order，不替换 depth，left，right child
+		delNode.order = replaceNode.order
+		delNode.value = replaceNode.value
+
+		// 删除 replaceNode
+		parent := replaceNode.parent
+		if replaceNode.isLeftChild() {
+			parent.leftChild = nil
+		} else {
+			parent.rightChild = nil
+		}
+		replaceNode = nil
+
+		for parent != nil {
+			// balance factor
+			err := parent.balanceFactor(false)
+			if err != nil {
+				return err
+			}
+
+			parent = parent.updateDepth()
+		}
+	}
+
+	return nil
 }
