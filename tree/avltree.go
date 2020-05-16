@@ -32,6 +32,7 @@ func NewAVLTree(dupl ...bool) *AVLTree {
 	return &AVLTree{flag: flag}
 }
 
+// 添加 node
 func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {

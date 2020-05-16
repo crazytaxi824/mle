@@ -26,6 +26,16 @@ func (n *node) isLeftChild() bool {
 	return n.order < n.parent.order
 }
 
+// delete self from the tree
+func (n *node) deleteSelf() {
+	if n.isLeftChild() {
+		n.parent.leftChild = nil
+	} else {
+		n.parent.rightChild = nil
+	}
+}
+
+// 计算左右高度
 func (n *node) calBalance() int {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -39,6 +49,7 @@ func (n *node) calBalance() int {
 	return lDep - rDep
 }
 
+// 判断需要按照什么方式旋转
 func (n *node) balanceFactor() error {
 	// cal balance factor
 	balanceFactor := n.calBalance()
@@ -114,6 +125,7 @@ func (n *node) Parent() *node {
 	return n.parent
 }
 
+// node 所属 tree
 func (n *node) Tree() *AVLTree {
 	return n.tree
 }
