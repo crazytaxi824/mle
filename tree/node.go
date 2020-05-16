@@ -56,7 +56,7 @@ func (n *node) balanceFactor() error {
 	switch {
 	case balanceFactor > 1: // 左边长
 		if n.leftChild.calBalance() > 0 { // 右旋
-			n.rightRotate()
+			n.rightRightRotate()
 		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
 			n.rightLeftRotate()
 		} else {
@@ -64,7 +64,7 @@ func (n *node) balanceFactor() error {
 		}
 	case balanceFactor < -1: // 右边长
 		if n.rightChild.calBalance() < 0 { // 左旋
-			n.leftRotate()
+			n.leftLeftRotate()
 		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
 			n.leftRightRotate()
 		} else {

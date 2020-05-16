@@ -13,7 +13,7 @@ func reBoundNodes(parent, child *node, isLeftChild bool) {
 }
 
 // 右旋
-func (n *node) rightRotate() {
+func (n *node) rightRightRotate() {
 	grandFather := n.parent
 	newParent := n.leftChild
 	newRightChild := n
@@ -59,7 +59,7 @@ func (n *node) rightLeftRotate() {
 }
 
 // 左旋
-func (n *node) leftRotate() {
+func (n *node) leftLeftRotate() {
 	grandFather := n.parent
 	newParent := n.rightChild
 	newLeftChild := n
