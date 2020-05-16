@@ -68,29 +68,6 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	return nil
 }
 
-// true - add to leftChild , false add to rightChild
-func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
-	var result *node
-	var isLeftNode bool
-
-	for loop := avl.root; loop != nil; {
-		if order == loop.order {
-			return nil, false, errors.New(ExistNodeErr)
-		}
-
-		if order < loop.order { // left
-			result = loop
-			loop = loop.leftChild
-			isLeftNode = true
-		} else { // right
-			result = loop
-			loop = loop.rightChild
-			isLeftNode = false
-		}
-	}
-	return result, isLeftNode, nil
-}
-
 // could be nil if the order is not exist
 func (avl *AVLTree) Find(order int) *node {
 	var result *node
@@ -107,7 +84,7 @@ func (avl *AVLTree) Find(order int) *node {
 }
 
 // delete node
-func (avl *AVLTree) Delete(order int) error {
+func (avl *AVLTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
 		return errors.New(NotExistNodeErr)
@@ -172,6 +149,10 @@ func (avl *AVLTree) Delete(order int) error {
 	}
 
 	return nil
+}
+
+func (avl *AVLTree) Delete(n *node) error {
+	return avl.DeleteFromOrder(n.order)
 }
 
 // 树的容量
