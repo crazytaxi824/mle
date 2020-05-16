@@ -50,23 +50,23 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	}
 
 	// whose child
-	whose, isLeftChild, err := avl.whoseChild(order)
+	parent, isLeftChild, err := avl.whoseChild(order)
 	if err != nil {
 		return err
 	}
 
 	// add node
-	whose.addNode(value, order, isLeftChild)
+	parent.addNode(value, order, isLeftChild)
 	avl.length++
 
-	for whose != nil {
+	for parent != nil { // TODO 可以优化不用一直检测到root
 		// balance factor
-		err = whose.balanceFactor()
+		err = parent.balanceFactor()
 		if err != nil {
 			return err
 		}
 
-		whose = whose.updateDepth()
+		parent = parent.updateDepth()
 	}
 
 	return nil

@@ -74,8 +74,7 @@ func (n *node) balanceFactor() error {
 	return nil
 }
 
-// return node indicate which node need to update its depth,
-// return nil means the depth update action of the tree stops here
+// return nil means it is the root node
 func (n *node) updateDepth() *node {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -86,13 +85,8 @@ func (n *node) updateDepth() *node {
 		rDep = n.rightChild.depth
 	}
 
-	maxDepth := max(lDep, rDep) + 1
-
-	if n.depth != maxDepth {
-		n.depth = maxDepth
-		return n.parent
-	}
-	return nil
+	n.depth = max(lDep, rDep) + 1
+	return n.parent
 }
 
 // return node's value
