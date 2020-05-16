@@ -5,7 +5,7 @@ import (
 )
 
 // true - add to leftChild , false add to rightChild
-func (n *node) addNode(value interface{}, order int, isLeftChild bool) {
+func (n *node) addNewChild(value interface{}, order int, isLeftChild bool) {
 	newChild := &node{
 		parent: n,
 		value:  value,
@@ -26,16 +26,7 @@ func (n *node) isLeftChild() bool {
 	return n.order < n.parent.order
 }
 
-// delete self from the tree
-func (n *node) deleteSelf() {
-	if n.isLeftChild() {
-		n.parent.leftChild = nil
-	} else {
-		n.parent.rightChild = nil
-	}
-}
-
-// 计算左右高度
+// 获取左右高度，计算左右高度差
 func (n *node) calBalance() int {
 	var lDep, rDep int
 	if n.leftChild != nil {
@@ -49,26 +40,33 @@ func (n *node) calBalance() int {
 	return lDep - rDep
 }
 
-// 判断需要按照什么方式旋转
-func (n *node) balanceFactor() error {
+// 判断需要按照什么方式旋转, is Add Node 表示是 Add node OR delete node 时使用该方法
+// 不同地方使用，可能会出现不同情况。
+func (n *node) balanceFactor(isAddNode bool) error {
 	// cal balance factor
 	balanceFactor := n.calBalance()
 	switch {
 	case balanceFactor > 1: // 左边长
 		if n.leftChild.calBalance() > 0 { // 右旋
-			n.rightRotate()
+			n.rightRightRotate()
 		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
 			n.rightLeftRotate()
 		} else {
-			return errors.New("some thing wrong")
+			if isAddNode {
+				return errors.New("balance factor err: the left Child is balanced")
+			}
+			n.rightRightRotate()
 		}
 	case balanceFactor < -1: // 右边长
 		if n.rightChild.calBalance() < 0 { // 左旋
-			n.leftRotate()
+			n.leftLeftRotate()
 		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
 			n.leftRightRotate()
 		} else {
-			return errors.New("some thing wrong")
+			if isAddNode {
+				return errors.New("balance factor err: the right Child is balanced")
+			}
+			n.leftLeftRotate()
 		}
 	}
 	return nil
@@ -127,10 +125,8 @@ func (n *node) Tree() *AVLTree {
 // left child -> right child -> right child -> right child...
 func (n *node) LargestLeftTree() *node {
 	var result *node
-	loop := n.leftChild
-	for loop != nil {
+	for loop := n.leftChild; loop != nil; loop = loop.rightChild {
 		result = loop
-		loop = loop.rightChild
 	}
 	return result
 }
@@ -138,10 +134,8 @@ func (n *node) LargestLeftTree() *node {
 // right child -> left child -> left child -> left child...
 func (n *node) SmallestRightTree() *node {
 	var result *node
-	loop := n.rightChild
-	for loop != nil {
+	for loop := n.rightChild; loop != nil; loop = loop.leftChild {
 		result = loop
-		loop = loop.leftChild
 	}
 	return result
 }

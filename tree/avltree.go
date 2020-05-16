@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	ExistNodeErr = "the node is already exist"
+	ExistNodeErr    = "the node is already exist"
+	NotExistNodeErr = "the node is not in the tree"
 )
 
 type node struct {
@@ -20,19 +21,14 @@ type node struct {
 type AVLTree struct {
 	root   *node
 	length int
-	flag   bool // 是否允许 duplicate order
 }
 
 // duplicate value is not allowed here
-func NewAVLTree(dupl ...bool) *AVLTree {
-	var flag bool
-	if dupl != nil {
-		flag = dupl[0]
-	}
-	return &AVLTree{flag: flag}
+func NewAVLTree() *AVLTree {
+	return &AVLTree{}
 }
 
-// 添加 node
+// add node
 func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
@@ -56,12 +52,12 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	}
 
 	// add node
-	parent.addNode(value, order, isLeftChild)
+	parent.addNewChild(value, order, isLeftChild)
 	avl.length++
 
 	for parent != nil { // TODO 可以优化不用一直检测到root
 		// balance factor
-		err = parent.balanceFactor()
+		err = parent.balanceFactor(true)
 		if err != nil {
 			return err
 		}
@@ -77,8 +73,7 @@ func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
 	var result *node
 	var isLeftNode bool
 
-	loop := avl.root
-	for loop != nil {
+	for loop := avl.root; loop != nil; {
 		if order == loop.order {
 			return nil, false, errors.New(ExistNodeErr)
 		}
@@ -109,4 +104,108 @@ func (avl *AVLTree) Find(order int) *node {
 	}
 
 	return result
+}
+
+// delete node
+func (avl *AVLTree) Delete(order int) error {
+	delNode := avl.Find(order)
+	if delNode == nil {
+		return errors.New(NotExistNodeErr)
+	}
+
+	var parent *node
+
+	switch {
+	case delNode.leftChild != nil && delNode.rightChild != nil: // has both child
+		// find replace
+		replaceNode := delNode.LargestLeftTree()
+
+		// 替换value，order，不替换 depth，left，right child
+		delNode.order = replaceNode.order
+		delNode.value = replaceNode.value
+
+		// 删除 replaceNode
+		parent = replaceNode.parent
+		if replaceNode.isLeftChild() {
+			parent.leftChild = nil
+		} else {
+			parent.rightChild = nil
+		}
+		replaceNode = nil
+
+	default:
+		parent = delNode.parent
+
+		if parent == nil { // root
+			avl.root = nil
+			delNode = nil
+			return nil
+		}
+
+		if delNode.leftChild != nil {
+			reBoundNodes(parent, delNode.leftChild, delNode.isLeftChild())
+		} else if delNode.rightChild != nil {
+			reBoundNodes(parent, delNode.rightChild, delNode.isLeftChild())
+		} else {
+			// 删除自己
+			if delNode.isLeftChild() {
+				parent.leftChild = nil
+			} else {
+				parent.rightChild = nil
+			}
+		}
+
+		delNode = nil
+	}
+
+	avl.length--
+
+	// 计算是否需要 Re-balance
+	for parent != nil {
+		// balance factor
+		err := parent.balanceFactor(false)
+		if err != nil {
+			return err
+		}
+
+		parent = parent.updateDepth()
+	}
+
+	return nil
+}
+
+// 树的容量
+func (avl *AVLTree) Size() int {
+	return avl.length
+}
+
+// 树得深度
+func (avl *AVLTree) Depth() int {
+	if avl.root == nil {
+		return 0
+	}
+	return avl.root.depth
+}
+
+// 树的root节点
+func (avl *AVLTree) Root() *node {
+	return avl.root
+}
+
+// 最小的元素
+func (avl *AVLTree) Smallest() *node {
+	var smallest *node
+	for loop := avl.root; loop != nil; loop = loop.leftChild {
+		smallest = loop
+	}
+	return smallest
+}
+
+// 最大元素
+func (avl *AVLTree) Biggest() *node {
+	var biggest *node
+	for loop := avl.root; loop != nil; loop = loop.rightChild {
+		biggest = loop
+	}
+	return biggest
 }

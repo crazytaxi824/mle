@@ -12,14 +12,12 @@ func reBoundNodes(parent, child *node, isLeftChild bool) {
 	}
 }
 
-// 右旋
-func (n *node) rightRotate() {
+// RR R0 R1
+func (n *node) rightRightRotate() {
 	grandFather := n.parent
 	newParent := n.leftChild
 	newRightChild := n
 	oldRightChild := newParent.rightChild
-
-	n.depth--
 
 	if grandFather == nil { // is the root
 		n.tree.root = newParent
@@ -32,7 +30,7 @@ func (n *node) rightRotate() {
 	reBoundNodes(newRightChild, oldRightChild, true)
 }
 
-// 右旋 -> 左旋
+// RL R-1
 func (n *node) rightLeftRotate() {
 	grandFather := n.parent
 	newParent := n.leftChild.rightChild
@@ -41,10 +39,6 @@ func (n *node) rightLeftRotate() {
 	oldRightChild := newParent.rightChild
 	oldLeftChild := newParent.leftChild
 
-	newParent.depth++
-	n.depth--
-	n.leftChild.depth--
-
 	if grandFather == nil {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
@@ -56,16 +50,17 @@ func (n *node) rightLeftRotate() {
 	reBoundNodes(newParent, newRightChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
+
+	// 重新计算 left child 的深度
+	newLeftChild.updateDepth()
 }
 
-// 左旋
-func (n *node) leftRotate() {
+// LL L0 L1
+func (n *node) leftLeftRotate() {
 	grandFather := n.parent
 	newParent := n.rightChild
 	newLeftChild := n
 	oldLeftChild := newParent.leftChild
-
-	n.depth--
 
 	if grandFather == nil {
 		n.tree.root = newParent
@@ -78,7 +73,7 @@ func (n *node) leftRotate() {
 	reBoundNodes(newLeftChild, oldLeftChild, false)
 }
 
-// 左旋 -> 右旋
+// LR L-1
 func (n *node) leftRightRotate() {
 	grandFather := n.parent
 	newParent := n.rightChild.leftChild
@@ -87,10 +82,6 @@ func (n *node) leftRightRotate() {
 	oldLeftChild := newParent.leftChild
 	oldRightChild := newParent.rightChild
 
-	newParent.depth++
-	n.depth--
-	n.rightChild.depth--
-
 	if grandFather == nil {
 		n.tree.root = newParent
 		n.tree.root.parent = nil
@@ -102,4 +93,7 @@ func (n *node) leftRightRotate() {
 	reBoundNodes(newParent, newLeftChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
+
+	// 重新计算 right child 的深度
+	newRightChild.updateDepth()
 }

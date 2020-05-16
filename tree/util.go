@@ -11,7 +11,7 @@ func max(a, b int) int {
 	return b
 }
 
-// print all element
+// 检测用，打印树中的所有节点，表明关系和深度
 func PrintAllNode(_node *node) {
 	if _node == nil {
 		return
