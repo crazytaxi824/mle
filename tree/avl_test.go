@@ -1,6 +1,7 @@
 package tree
 
 import (
+	"sort"
 	"testing"
 )
 
@@ -28,6 +29,10 @@ func TestAVLTree_Add(t *testing.T) {
 	t.Log(tree.Root().Order())
 	t.Log(tree.Smallest().Order())
 	t.Log(tree.Biggest().Order())
+
+	if tree.Size() != len(s) {
+		t.Fail()
+	}
 }
 
 // delete
@@ -48,8 +53,31 @@ func TestAVLTree_Delete(t *testing.T) {
 	_ = tree.DeleteFromOrder(86)
 
 	PrintAllNode(tree.root)
+
+	if tree.Size() != len(s)-5 {
+		t.Fail()
+	}
 }
 
+// sort
+func TestAVLTree_Sort(t *testing.T) {
+	tree := NewAVLTree()
+	for _, v := range s {
+		err := tree.Add(v, v)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	PrintAllNode(tree.root)
+
+	for _, v := range tree.Sort() {
+		t.Log(v.order)
+	}
+}
+
+// index
 func BenchmarkSearchInSlice(b *testing.B) {
 	ss := make([]int, 1000)
 	for i := 0; i < 1000; i++ {
@@ -86,6 +114,7 @@ func BenchmarkSearchInAVLTree(b *testing.B) {
 	b.ReportAllocs()
 }
 
+// add
 func BenchmarkAVLTree_Add(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tree := NewAVLTree()
@@ -101,10 +130,33 @@ func BenchmarkAVLTree_Add(b *testing.B) {
 
 func BenchmarkAppendInSlice(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var s []int
+		var ss []int
 		for n := 0; n < 1000; n++ {
-			_ = append(s, n)
+			_ = append(ss, n)
 		}
+	}
+	b.ReportAllocs()
+}
+
+// sort
+func BenchmarkAVLTree_Sort(b *testing.B) {
+	tree := NewAVLTree()
+	for _, v := range s {
+		err := tree.Add(v, v)
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+	for i := 0; i < b.N; i++ {
+		tree.Sort()
+	}
+	b.ReportAllocs()
+}
+
+func BenchmarkSortSlice(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		sort.Ints(s)
 	}
 	b.ReportAllocs()
 }

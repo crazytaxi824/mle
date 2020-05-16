@@ -101,26 +101,3 @@ func (avl *AVLTree) checkBalances(_node *node, isAddNode bool) error {
 	}
 	return nil
 }
-
-// true - add to leftChild , false add to rightChild
-func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
-	var result *node
-	var isLeftNode bool
-
-	for loop := avl.root; loop != nil; {
-		if order == loop.order {
-			return nil, false, errors.New(ExistNodeErr)
-		}
-
-		if order < loop.order { // left
-			result = loop
-			loop = loop.leftChild
-			isLeftNode = true
-		} else { // right
-			result = loop
-			loop = loop.rightChild
-			isLeftNode = false
-		}
-	}
-	return result, isLeftNode, nil
-}

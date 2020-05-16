@@ -59,6 +59,29 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	return avl.checkBalances(parent, true)
 }
 
+// true - add to leftChild , false add to rightChild
+func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
+	var result *node
+	var isLeftNode bool
+
+	for loop := avl.root; loop != nil; {
+		if order == loop.order {
+			return nil, false, errors.New(ExistNodeErr)
+		}
+
+		if order < loop.order { // left
+			result = loop
+			loop = loop.leftChild
+			isLeftNode = true
+		} else { // right
+			result = loop
+			loop = loop.rightChild
+			isLeftNode = false
+		}
+	}
+	return result, isLeftNode, nil
+}
+
 // could be nil if the order is not exist
 func (avl *AVLTree) Find(order int) *node {
 	var result *node
@@ -171,4 +194,44 @@ func (avl *AVLTree) Biggest() *node {
 		biggest = loop
 	}
 	return biggest
+}
+
+// sort
+func (avl *AVLTree) Sort() []*node {
+	result := make([]*node, 0, avl.length)
+	smallest := avl.Smallest()
+
+	// s -> small right tree
+	for loop := smallest; loop != nil; {
+		result = append(result, loop)
+		if loop.SmallestRightTree() != nil { // 先找自己 smallest right
+			loop = loop.SmallestRightTree()
+		} else { // 再找 parent
+			if loop.parent != nil && loop.order < loop.parent.order { // 在左边
+				loop = loop.parent
+			} else if loop.parent != nil && loop.order >= loop.parent.order {
+				// 如果自己是 right child 继续向上找一直到 left child
+				loop = loop.findLeftParent()
+			} else {
+				break
+			}
+		}
+	}
+
+	return result
+}
+
+// for sort，一直寻找 parent，直到自己是 parent 的 left child，返回 parent，
+// 如果自己是 parent 的 right child，继续向上寻找。
+func (n *node) findLeftParent() *node {
+	for loop := n; ; {
+		if loop.parent == nil {
+			return nil
+		}
+		if loop.order >= loop.parent.order {
+			loop = loop.parent
+		} else {
+			return loop.parent
+		}
+	}
 }
