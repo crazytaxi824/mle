@@ -12,7 +12,7 @@ var s = []int{100, 150, 50, 30, 70, 120, 20, 10, 40, 80, 81, 82, 83, 84, 85, 86,
 func TestAVLTree_Add(t *testing.T) {
 	tree := NewAVLTree()
 	for _, v := range s {
-		err := tree.Add(v, v)
+		err := tree.Add(v, struct{}{})
 		if err != nil {
 			t.Error(err)
 			return
@@ -39,7 +39,7 @@ func TestAVLTree_Add(t *testing.T) {
 func TestAVLTree_Delete(t *testing.T) {
 	tree := NewAVLTree()
 	for _, v := range s {
-		err := tree.Add(v, v)
+		err := tree.Add(v, struct{}{})
 		if err != nil {
 			t.Error(err)
 			return
@@ -63,7 +63,7 @@ func TestAVLTree_Delete2(t *testing.T) {
 	ss := []int{100, 50, 150, 70, 30, 40, 20, 10, 25}
 	tree := NewAVLTree()
 	for _, v := range ss {
-		err := tree.Add(v, v)
+		err := tree.Add(v, struct{}{})
 		if err != nil {
 			t.Error(err)
 			return
@@ -94,7 +94,27 @@ func TestAVLTree_Sort(t *testing.T) {
 	}
 }
 
-// index
+// search
+func BenchmarkSearchInAVLTree(b *testing.B) {
+	tree := NewAVLTree()
+	for i := 0; i < 1000; i++ {
+		err := tree.Add(i, struct{}{})
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+
+	for i := 0; i < b.N; i++ {
+		n := tree.Find(900)
+		_, ok := n.value.(struct{})
+		if !ok {
+			b.Fail()
+		}
+	}
+	b.ReportAllocs()
+}
+
 func BenchmarkSearchInSlice(b *testing.B) {
 	ss := make([]int, 1000)
 	for i := 0; i < 1000; i++ {
@@ -111,32 +131,12 @@ func BenchmarkSearchInSlice(b *testing.B) {
 	b.ReportAllocs()
 }
 
-func BenchmarkSearchInAVLTree(b *testing.B) {
-	tree := NewAVLTree()
-	for i := 0; i < 1000; i++ {
-		err := tree.Add(i, i)
-		if err != nil {
-			b.Error(err)
-			return
-		}
-	}
-
-	for i := 0; i < b.N; i++ {
-		n := tree.Find(900)
-		_, ok := n.value.(int)
-		if !ok {
-			b.Fail()
-		}
-	}
-	b.ReportAllocs()
-}
-
 // add
 func BenchmarkAVLTree_Add(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tree := NewAVLTree()
 		for n := 0; n < 1000; n++ {
-			err := tree.Add(n, n)
+			err := tree.Add(n, struct{}{})
 			if err != nil {
 				b.Error(err)
 			}
@@ -159,7 +159,7 @@ func BenchmarkAppendInSlice(b *testing.B) {
 func BenchmarkAVLTree_Sort(b *testing.B) {
 	tree := NewAVLTree()
 	for _, v := range s {
-		err := tree.Add(v, v)
+		err := tree.Add(v, struct{}{})
 		if err != nil {
 			b.Error(err)
 			return

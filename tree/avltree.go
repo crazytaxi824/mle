@@ -15,7 +15,7 @@ type node struct {
 	depth                 int         // 自己的深度，最下层默认为1
 	value                 interface{} // 内容
 	order                 int         // 排序号码
-	tree                  *AVLTree    // 树
+	tree                  *AVLTree    // 所属树
 }
 
 type AVLTree struct {
@@ -23,12 +23,12 @@ type AVLTree struct {
 	length int
 }
 
-// duplicate value is not allowed here
+// duplicate order number is not allowed here
 func NewAVLTree() *AVLTree {
 	return &AVLTree{}
 }
 
-// add node
+// add node to the tree
 func (avl *AVLTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
@@ -82,7 +82,7 @@ func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
 	return result, isLeftNode, nil
 }
 
-// could be nil if the order is not exist
+// find node from order number, could be nil if the order is not exist
 func (avl *AVLTree) Find(order int) *node {
 	var result *node
 
@@ -97,7 +97,7 @@ func (avl *AVLTree) Find(order int) *node {
 	return result
 }
 
-// delete node
+// delete node from order number
 func (avl *AVLTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
@@ -156,16 +156,17 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	return avl.checkBalances(parent, false)
 }
 
+// delete node
 func (avl *AVLTree) Delete(n *node) error {
 	return avl.DeleteFromOrder(n.order)
 }
 
-// 树的容量
+// total number of nodes in the tree
 func (avl *AVLTree) Size() int {
 	return avl.length
 }
 
-// 树得深度
+// total depth of the tree
 func (avl *AVLTree) Depth() int {
 	if avl.root == nil {
 		return 0
@@ -173,12 +174,12 @@ func (avl *AVLTree) Depth() int {
 	return avl.root.depth
 }
 
-// 树的root节点
+// root node of the tree
 func (avl *AVLTree) Root() *node {
 	return avl.root
 }
 
-// 最小的元素
+// smallest node in the tree
 func (avl *AVLTree) Smallest() *node {
 	var smallest *node
 	for loop := avl.root; loop != nil; loop = loop.leftChild {
@@ -187,7 +188,7 @@ func (avl *AVLTree) Smallest() *node {
 	return smallest
 }
 
-// 最大元素
+// biggest node in the tree
 func (avl *AVLTree) Biggest() *node {
 	var biggest *node
 	for loop := avl.root; loop != nil; loop = loop.rightChild {
@@ -196,7 +197,7 @@ func (avl *AVLTree) Biggest() *node {
 	return biggest
 }
 
-// sort
+// sort the nodes in ASC order
 func (avl *AVLTree) Sort() []*node {
 	result := make([]*node, 0, avl.length)
 	smallest := avl.Smallest()

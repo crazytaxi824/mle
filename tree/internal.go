@@ -73,6 +73,7 @@ func (n *node) balanceFactor(isAddNode bool) error {
 }
 
 // return nil means it is the root node, or it needs to stop
+// 如果返回nil，说明该节点是 root，或者该节点不用再继续向上查找了
 func (n *node) updateDepth() *node {
 	var lDep, rDep int
 	if n.leftChild != nil {

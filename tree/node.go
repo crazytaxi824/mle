@@ -35,7 +35,7 @@ func (n *node) Parent() *node {
 	return n.parent
 }
 
-// node 所属 tree
+// the tree which the node belongs to
 func (n *node) Tree() *AVLTree {
 	return n.tree
 }
