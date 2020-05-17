@@ -85,3 +85,11 @@ func (avl *AVLTree) checkBalances(_node *node) {
 		loop = loop.updateDepth()
 	}
 }
+
+// return predecessor Or Successor, if return nil means the node has no child
+func (n *node) predecessorOrSuccessor() *node {
+	if n.Predecessor() != nil {
+		return n.Predecessor()
+	}
+	return n.Successor()
+}

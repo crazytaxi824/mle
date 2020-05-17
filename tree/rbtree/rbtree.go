@@ -211,12 +211,12 @@ func (t *RBTree) Delete(n *node) error {
 
 // 6 cases of the DOUBLE BLACK situation
 func (t *RBTree) casesOfDoubleBlackSituation(blackLeaf *node) {
-	for doubleBlack := blackLeaf; doubleBlack != nil; {
+	for doubleBlack := blackLeaf; doubleBlack != nil && !doubleBlack.isRootNode(); {
 		sibling := doubleBlack.sibling()
 
 		switch {
-		case doubleBlack.isRootNode(): // double black is root node
-			doubleBlack = nil
+		// case doubleBlack.isRootNode(): // double black is root node
+		// 	doubleBlack = nil
 
 		case doubleBlack.parent.color == RED &&
 			sibling.color == BLACK && sibling.bothChildrenAreBlack():

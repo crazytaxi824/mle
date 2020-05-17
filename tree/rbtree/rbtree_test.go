@@ -39,3 +39,22 @@ func TestDelete(t *testing.T) {
 
 	PrintAllNode(tree.root)
 }
+
+func TestDeleteRBRoot(t *testing.T) {
+	tree := NewRBTree()
+	for i := 0; i < 5; i++ {
+		tree.Add(i, struct{}{})
+	}
+
+	for i := 0; i < 5; i++ {
+		t.Log(i)
+		err := tree.DeleteFromOrder(i)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		PrintAllNode(tree.root)
+	}
+
+	PrintAllNode(tree.root)
+}
