@@ -1,4 +1,4 @@
-package tree
+package avltree
 
 // true - add to leftChild , false add to rightChild
 func (n *node) addNewChild(value interface{}, order int, isLeftChild bool) {

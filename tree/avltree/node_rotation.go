@@ -1,4 +1,4 @@
-package tree
+package avltree
 
 func reBoundNodes(parent, child *node, isLeftChild bool) {
 	if isLeftChild {

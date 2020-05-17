@@ -1,4 +1,4 @@
-package tree
+package avltree
 
 // return node's value
 func (n *node) Value() interface{} {
