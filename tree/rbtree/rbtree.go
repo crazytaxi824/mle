@@ -198,3 +198,9 @@ func (n *node) checkWhatKindRotation() byte {
 		return LRRotation
 	}
 }
+
+func (t *RBTree) DeleteFromOrder(order int) {
+	// delete red no problem
+
+	// delete black node / RR conflict
+}

@@ -41,7 +41,8 @@ func (n *node) Tree() *AVLTree {
 }
 
 // left child -> right child -> right child -> right child...
-func (n *node) LargestLeftTree() *node {
+// largest Left sub tree
+func (n *node) Predecessor() *node {
 	var result *node
 	for loop := n.leftChild; loop != nil; loop = loop.rightChild {
 		result = loop
@@ -50,7 +51,8 @@ func (n *node) LargestLeftTree() *node {
 }
 
 // right child -> left child -> left child -> left child...
-func (n *node) SmallestRightTree() *node {
+// smallest right sub tree
+func (n *node) Successor() *node {
 	var result *node
 	for loop := n.rightChild; loop != nil; loop = loop.leftChild {
 		result = loop
