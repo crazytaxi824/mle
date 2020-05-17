@@ -1,4 +1,4 @@
-package tree
+package rbtree
 
 func reBoundNodes(parent, child *node, isLeftChild bool) {
 	if isLeftChild {
@@ -28,9 +28,6 @@ func (n *node) leftLeftRotate() {
 
 	reBoundNodes(newParent, newRightChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
-
-	// 重置 new parent.depth
-	newParent.depth = 0
 }
 
 // LR
@@ -53,12 +50,6 @@ func (n *node) leftRightRotate() {
 	reBoundNodes(newParent, newRightChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
-
-	// 重新计算 left child 的深度
-	newLeftChild.updateDepth()
-
-	// 重置 new parent.depth
-	newParent.depth = 0
 }
 
 // RR
@@ -77,9 +68,6 @@ func (n *node) rightRightRotate() {
 
 	reBoundNodes(newParent, newLeftChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
-
-	// 重置 new parent.depth
-	newParent.depth = 0
 }
 
 // RL
@@ -102,10 +90,4 @@ func (n *node) rightLeftRotate() {
 	reBoundNodes(newParent, newLeftChild, true)
 	reBoundNodes(newLeftChild, oldLeftChild, false)
 	reBoundNodes(newRightChild, oldRightChild, true)
-
-	// 重新计算 right child 的深度
-	newRightChild.updateDepth()
-
-	// 重置 new parent.depth
-	newParent.depth = 0
 }

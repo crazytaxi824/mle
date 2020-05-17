@@ -1,4 +1,4 @@
-package tree
+package rbtree
 
 // return node's value
 func (n *node) Value() interface{} {
@@ -15,9 +15,10 @@ func (n *node) Order() int {
 	return n.order
 }
 
-// return node's depth
-func (n *node) Depth() int {
-	return n.depth
+// return node's color,
+// true-RED / false-BLACK
+func (n *node) Color() bool {
+	return n.color
 }
 
 // could be nil
@@ -36,7 +37,7 @@ func (n *node) Parent() *node {
 }
 
 // the tree which the node belongs to
-func (n *node) Tree() *AVLTree {
+func (n *node) Tree() *RBTree {
 	return n.tree
 }
 

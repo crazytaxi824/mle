@@ -56,7 +56,9 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	avl.length++
 
 	// 计算是否需要 Re-balance
-	return avl.checkBalances(parent, true)
+	avl.checkBalances(parent)
+
+	return nil
 }
 
 // true - add to leftChild , false add to rightChild
@@ -109,7 +111,7 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	switch {
 	case delNode.leftChild != nil && delNode.rightChild != nil: // has both child
 		// find replace
-		replaceNode := delNode.LargestLeftTree()
+		replaceNode := delNode.Predecessor()
 
 		// 删除 replaceNode
 		parent = replaceNode.parent
@@ -153,7 +155,9 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	avl.length--
 
 	// 计算是否需要 Re-balance
-	return avl.checkBalances(parent, false)
+	avl.checkBalances(parent)
+
+	return nil
 }
 
 // delete node
@@ -205,8 +209,8 @@ func (avl *AVLTree) Sort() []*node {
 	// s -> small right tree
 	for loop := smallest; loop != nil; {
 		result = append(result, loop)
-		if loop.SmallestRightTree() != nil { // 先找自己 smallest right
-			loop = loop.SmallestRightTree()
+		if loop.Successor() != nil { // 先找自己 smallest right
+			loop = loop.Successor()
 		} else { // 再找 parent
 			if loop.parent != nil && loop.order < loop.parent.order { // 在左边
 				loop = loop.parent
