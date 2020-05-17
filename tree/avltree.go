@@ -56,7 +56,9 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 	avl.length++
 
 	// 计算是否需要 Re-balance
-	return avl.checkBalances(parent, true)
+	avl.checkBalances(parent)
+
+	return nil
 }
 
 // true - add to leftChild , false add to rightChild
@@ -153,7 +155,9 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	avl.length--
 
 	// 计算是否需要 Re-balance
-	return avl.checkBalances(parent, false)
+	avl.checkBalances(parent)
+
+	return nil
 }
 
 // delete node
