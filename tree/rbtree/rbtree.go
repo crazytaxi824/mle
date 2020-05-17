@@ -199,6 +199,21 @@ func (n *node) checkWhatKindRotation() byte {
 	}
 }
 
+// find node from order number, could be nil if the order is not exist
+func (t *RBTree) Find(order int) *node {
+	var result *node
+	for result = t.root; result != nil && result.order != order; {
+		if order < result.order { // 左边
+			result = result.leftChild
+		} else if order > result.order { // 右边
+			result = result.rightChild
+		}
+	}
+
+	return result
+}
+
+// delete node
 func (t *RBTree) DeleteFromOrder(order int) {
 	// delete red no problem
 
