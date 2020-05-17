@@ -162,7 +162,7 @@ func (t *RBTree) DeleteFromOrder(order int) error {
 	for loop := delNode; loop != nil; {
 		ps := loop.predecessorOrSuccessor()
 		switch {
-		case ps == nil && loop.color == RED:
+		case ps == nil && loop.color == RED: // red leaf - means no child
 			// delete node
 			if loop.isLeftChild() {
 				loop.parent.leftChild = nil
@@ -171,14 +171,14 @@ func (t *RBTree) DeleteFromOrder(order int) error {
 			}
 			loop = nil
 
-		case ps == nil && loop.color == BLACK:
+		case ps == nil && loop.color == BLACK: // black leaf - means no child
 			if loop.isRootNode() { // root situation
 				t.root = nil
 				t.length--
 				return nil
 			}
 
-			// black leaf - no child, double black situation
+			// double black situation
 			t.recolorOrRotateDoubleBlackLeaf(loop)
 
 			// delete node
@@ -209,23 +209,23 @@ func (t *RBTree) recolorOrRotateDoubleBlackLeaf(blackLeaf *node) {
 		case doubleBlack.isRootNode(): // double black is root node
 			doubleBlack = nil
 
-		case sibling.color == BLACK && doubleBlack.parent.color == RED &&
-			sibling.childrenAreBlack():
+		case doubleBlack.parent.color == RED &&
+			sibling.color == BLACK && sibling.childrenAreBlack():
 
 			// swap color
 			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
 
 			doubleBlack = nil
 
-		case sibling.color == BLACK && doubleBlack.parent.color == BLACK &&
-			sibling.childrenAreBlack():
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == BLACK && sibling.childrenAreBlack():
 			// recolor
 			sibling.color = RED
 
 			doubleBlack = doubleBlack.parent
 
-		case sibling.color == RED && doubleBlack.parent.color == BLACK &&
-			sibling.childrenAreBlack():
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == RED && sibling.childrenAreBlack():
 
 			// swap color
 			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
@@ -238,7 +238,8 @@ func (t *RBTree) recolorOrRotateDoubleBlackLeaf(blackLeaf *node) {
 			}
 			// doubleBlack = doubleBlack, double black is still here, apply other cases
 
-		case sibling.color == BLACK && doubleBlack.parent.color == BLACK &&
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == BLACK &&
 			(doubleBlack.farSideOfTheNephew() == nil || doubleBlack.farSideOfTheNephew().color == BLACK) &&
 			(doubleBlack.nearSideOfTheNephew() != nil && doubleBlack.nearSideOfTheNephew().color == RED):
 			// recolor
@@ -254,8 +255,7 @@ func (t *RBTree) recolorOrRotateDoubleBlackLeaf(blackLeaf *node) {
 			// doubleBlack = doubleBlack, double black is still here, apply other cases
 
 		case sibling.color == BLACK &&
-			doubleBlack.farSideOfTheNephew() != nil &&
-			doubleBlack.farSideOfTheNephew().color == RED:
+			doubleBlack.farSideOfTheNephew() != nil && doubleBlack.farSideOfTheNephew().color == RED:
 
 			// recolor far side of its nephew
 			doubleBlack.farSideOfTheNephew().color = BLACK
