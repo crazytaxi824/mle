@@ -62,3 +62,33 @@ func (n *node) checkWhatKindRotation() byte {
 		return LRRotation
 	}
 }
+
+// return predecessor Or Successor, if return nil means the node has no child
+func (n *node) predecessorOrSuccessor() *node {
+	if n.Predecessor() != nil {
+		return n.Predecessor()
+	}
+	return n.Successor()
+}
+
+// both child are BLACK color, nil child is considered as BLACK color
+func (n *node) bothChildrenAreBlack() bool {
+	return (n.leftChild == nil || n.leftChild.color == BLACK) &&
+		(n.rightChild == nil || n.rightChild.color == BLACK)
+}
+
+// opposite side child of the sibling
+func (n *node) farSideOfTheNephew() *node {
+	if n.isLeftChild() {
+		return n.sibling().rightChild
+	}
+	return n.sibling().leftChild
+}
+
+// near side child of the sibling
+func (n *node) nearSideOfTheNephew() *node {
+	if n.isLeftChild() {
+		return n.sibling().leftChild
+	}
+	return n.sibling().rightChild
+}

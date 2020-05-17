@@ -66,7 +66,7 @@ func (t *RBTree) Add(order int, value interface{}) error {
 	t.length++
 
 	// check color
-	t.reColorAndRotation(newNode)
+	t.addNodeReColorAndRotation(newNode)
 
 	return nil
 }
@@ -94,8 +94,8 @@ func (t *RBTree) whoseChild(order int) (*node, bool, error) {
 	return result, isLeftNode, nil
 }
 
-// if parent color is BLACK, do nothing
-func (t *RBTree) reColorAndRotation(_node *node) {
+// recolor and rotation when add note to the tree
+func (t *RBTree) addNodeReColorAndRotation(_node *node) {
 	for loop := _node; loop != nil; {
 		switch loop.checkWhatToDo() {
 		case RECOLOR:
@@ -130,7 +130,8 @@ func (t *RBTree) reColorAndRotation(_node *node) {
 			loop.parent.parent.color = !loop.parent.parent.color
 			loop.parent.parent.rightLeftRotate()
 			loop = nil
-		default:
+
+		default: // Do Nothing
 			loop = nil
 		}
 	}
@@ -151,25 +152,202 @@ func (t *RBTree) Find(order int) *node {
 }
 
 // delete node
-func (t *RBTree) DeleteFromOrder(order int) {
-	// delete red no problem
-
-	// delete black node / RR conflict
-}
-
-// delete RedNode
-// TODO
-func (t *RBTree) deleteRedNode(redNode *node) {
-	switch {
-	case redNode.leftChild == nil && redNode.rightChild == nil: // no child
-		if redNode.isLeftChild() {
-			redNode.parent.leftChild = nil
-		} else {
-			redNode.parent.rightChild = nil
-		}
-	case redNode.leftChild != nil && redNode.rightChild == nil: // has left child
-
+func (t *RBTree) DeleteFromOrder(order int) error {
+	// find the node needs to be deleted
+	delNode := t.Find(order)
+	if delNode == nil {
+		return errors.New(NotExistNodeErr)
 	}
 
-	redNode = nil
+	// deletion cases
+	for loop := delNode; loop != nil; {
+		// find a predecessor or successor,
+		// if it's nil means no child
+		ps := loop.predecessorOrSuccessor()
+
+		switch {
+		case ps == nil && loop.color == RED: // red leaf - means no child
+			// delete node
+			if loop.isLeftChild() {
+				loop.parent.leftChild = nil
+			} else {
+				loop.parent.rightChild = nil
+			}
+			loop = nil
+
+		case ps == nil && loop.color == BLACK: // black leaf - means no child
+			if loop.isRootNode() { // root situation
+				t.root = nil
+				t.length--
+				return nil
+			}
+
+			// DOUBLE BLACK situation
+			t.casesOfDoubleBlackSituation(loop)
+
+			// delete node
+			if loop.isLeftChild() {
+				loop.parent.leftChild = nil
+			} else {
+				loop.parent.rightChild = nil
+			}
+			loop = nil
+
+		case ps != nil: // ps is not nil, means ps is the replace node to be deleted
+			loop.value = ps.value
+			loop.order = ps.order
+
+			loop = ps
+		}
+	}
+
+	t.length--
+	return nil
+}
+
+func (t *RBTree) Delete(n *node) error {
+	return t.DeleteFromOrder(n.order)
+}
+
+// 6 cases of the DOUBLE BLACK situation
+func (t *RBTree) casesOfDoubleBlackSituation(blackLeaf *node) {
+	for doubleBlack := blackLeaf; doubleBlack != nil; {
+		sibling := doubleBlack.sibling()
+
+		switch {
+		case doubleBlack.isRootNode(): // double black is root node
+			doubleBlack = nil
+
+		case doubleBlack.parent.color == RED &&
+			sibling.color == BLACK && sibling.bothChildrenAreBlack():
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			doubleBlack = nil
+
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == BLACK && sibling.bothChildrenAreBlack():
+			// recolor
+			sibling.color = RED
+
+			doubleBlack = doubleBlack.parent
+
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == RED && sibling.bothChildrenAreBlack():
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				doubleBlack.parent.rightRightRotate()
+			} else {
+				doubleBlack.parent.leftLeftRotate()
+			}
+			// doubleBlack = doubleBlack, double black is still here, apply other cases
+
+		case doubleBlack.parent.color == BLACK &&
+			sibling.color == BLACK &&
+			(doubleBlack.farSideOfTheNephew() == nil || doubleBlack.farSideOfTheNephew().color == BLACK) &&
+			(doubleBlack.nearSideOfTheNephew() != nil && doubleBlack.nearSideOfTheNephew().color == RED):
+			// recolor
+			doubleBlack.nearSideOfTheNephew().color = BLACK
+			sibling.color = RED
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				sibling.leftLeftRotate()
+			} else {
+				sibling.rightRightRotate()
+			}
+			// doubleBlack = doubleBlack, double black is still here, apply other cases
+
+		case sibling.color == BLACK &&
+			doubleBlack.farSideOfTheNephew() != nil && doubleBlack.farSideOfTheNephew().color == RED:
+
+			// recolor far side of its nephew
+			doubleBlack.farSideOfTheNephew().color = BLACK
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				doubleBlack.parent.rightRightRotate()
+			} else {
+				doubleBlack.parent.leftLeftRotate()
+			}
+
+			doubleBlack = nil
+		}
+	}
+}
+
+// total number of nodes in the tree
+func (t *RBTree) Size() int {
+	return t.length
+}
+
+// root node of the tree
+func (t *RBTree) Root() *node {
+	return t.root
+}
+
+// smallest node in the tree
+func (t *RBTree) Smallest() *node {
+	var smallest *node
+	for loop := t.root; loop != nil; loop = loop.leftChild {
+		smallest = loop
+	}
+	return smallest
+}
+
+// biggest node in the tree
+func (t *RBTree) Biggest() *node {
+	var biggest *node
+	for loop := t.root; loop != nil; loop = loop.rightChild {
+		biggest = loop
+	}
+	return biggest
+}
+
+// sort the nodes in ASC order
+func (t *RBTree) Sort() []*node {
+	result := make([]*node, 0, t.length)
+	smallest := t.Smallest()
+
+	// s -> small right tree
+	for loop := smallest; loop != nil; {
+		result = append(result, loop)
+		if loop.Successor() != nil { // 先找自己 smallest right
+			loop = loop.Successor()
+		} else { // 再找 parent
+			if loop.parent != nil && loop.order < loop.parent.order { // 在左边
+				loop = loop.parent
+			} else if loop.parent != nil && loop.order >= loop.parent.order {
+				// 如果自己是 right child 继续向上找一直到 left child
+				loop = loop.findLeftParent()
+			} else {
+				break
+			}
+		}
+	}
+
+	return result
+}
+
+// for sort，一直寻找 parent，直到自己是 parent 的 left child，返回 parent，
+// 如果自己是 parent 的 right child，继续向上寻找。
+func (n *node) findLeftParent() *node {
+	for loop := n; ; {
+		if loop.parent == nil {
+			return nil
+		}
+		if loop.order >= loop.parent.order {
+			loop = loop.parent
+		} else {
+			return loop.parent
+		}
+	}
 }
