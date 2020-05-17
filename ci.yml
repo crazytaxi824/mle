@@ -122,7 +122,7 @@ linters-settings:
     # 最小复杂性
     min-complexity: 15
 
-  # TODO, BUG and FIXME 标记
+  # 默认有 TODO标记 BUG标记 FIXME标记
   godox:
     # these can be overwritten by this setting
     keywords:

@@ -95,7 +95,7 @@ func (n *node) updateDepth() *node {
 // 检查树中的节点是否平衡
 func (avl *AVLTree) checkBalances(_node *node, isAddNode bool) error {
 	loop := _node
-	for loop != nil { // TODO 可以优化不用一直检测到root
+	for loop != nil { // 优化不用一直检测到root
 		// balance factor
 		err := loop.balanceFactor(isAddNode)
 		if err != nil {
