@@ -26,7 +26,7 @@ type node struct {
 	leftChild, rightChild *node       // 左右节点
 	value                 interface{} // 内容
 	order                 int         // 排序号码
-	color                 bool        // 颜色
+	color                 bool        // 颜色, RED - true / BLACK - false
 	tree                  *RBTree     // 所属树
 }
 
@@ -94,44 +94,6 @@ func (t *RBTree) whoseChild(order int) (*node, bool, error) {
 	return result, isLeftNode, nil
 }
 
-// true - add to leftChild , false add to rightChild
-func (n *node) addNewChild(value interface{}, order int, isLeftChild bool) *node {
-	newNode := &node{
-		parent: n,
-		value:  value,
-		order:  order,
-		tree:   n.tree,
-		color:  RED,
-	}
-	if isLeftChild {
-		n.leftChild = newNode
-	} else {
-		n.rightChild = newNode
-	}
-
-	return newNode
-}
-
-// 判断自己是left child 还是 right child
-func (n *node) isLeftChild() bool {
-	// 内部使用，如果是 root 节点会 panic
-	return n.order < n.parent.order
-}
-
-// sibling could be nil
-func (n *node) sibling() *node {
-	// 内部使用，如果是 root 节点会 panic
-	if n.isLeftChild() {
-		return n.parent.rightChild
-	}
-	return n.parent.leftChild
-}
-
-// check if the node is the root node
-func (n *node) isRootNode() bool {
-	return n.parent == nil
-}
-
 // if parent color is BLACK, do nothing
 func (t *RBTree) reColorAndRotation(_node *node) {
 	for loop := _node; loop != nil; {
@@ -174,31 +136,6 @@ func (t *RBTree) reColorAndRotation(_node *node) {
 	}
 }
 
-// re-color ? or rotation ?
-func (n *node) checkWhatToDo() byte {
-	if n.color == RED && n.parent.color == RED { // RR conflict
-		if n.parent.sibling() == nil || n.parent.sibling().color == BLACK { // sibling is nil or BLACK
-			return n.checkWhatKindRotation()
-		}
-		return RECOLOR // sibling is RED
-	}
-	return DONothing
-}
-
-// RR RL LL LR rotation
-func (n *node) checkWhatKindRotation() byte {
-	switch {
-	case n.parent.isLeftChild() && n.isLeftChild():
-		return LLRotation
-	case !n.parent.isLeftChild() && !n.isLeftChild():
-		return RRRotation
-	case !n.parent.isLeftChild() && n.isLeftChild():
-		return RLRotation
-	default:
-		return LRRotation
-	}
-}
-
 // find node from order number, could be nil if the order is not exist
 func (t *RBTree) Find(order int) *node {
 	var result *node
@@ -218,4 +155,21 @@ func (t *RBTree) DeleteFromOrder(order int) {
 	// delete red no problem
 
 	// delete black node / RR conflict
+}
+
+// delete RedNode
+// TODO
+func (t *RBTree) deleteRedNode(redNode *node) {
+	switch {
+	case redNode.leftChild == nil && redNode.rightChild == nil: // no child
+		if redNode.isLeftChild() {
+			redNode.parent.leftChild = nil
+		} else {
+			redNode.parent.rightChild = nil
+		}
+	case redNode.leftChild != nil && redNode.rightChild == nil: // has left child
+
+	}
+
+	redNode = nil
 }
