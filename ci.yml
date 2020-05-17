@@ -332,6 +332,7 @@ issues:
   exclude:
     # golint 和 stylecheck 都不报注释错误。
     - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+    - should omit comparison to bool constant
 
   exclude-rules: # 设置某个目录的排除规则。
     - path: _test\.go # _test.go 测试文件，不使用以下lint

@@ -47,26 +47,26 @@ func (n *node) balanceFactor(isAddNode bool) error {
 	balanceFactor := n.calBalance()
 	switch {
 	case balanceFactor > 1: // 左边长
-		if n.leftChild.calBalance() > 0 { // 右旋
-			n.rightRightRotate()
-		} else if n.leftChild.calBalance() < 0 { // 右旋左旋
-			n.rightLeftRotate()
+		if n.leftChild.calBalance() > 0 { // 左边长
+			n.leftLeftRotate()
+		} else if n.leftChild.calBalance() < 0 { // 右变长
+			n.leftRightRotate()
 		} else {
 			if isAddNode {
 				return errors.New("balance factor err: the left Child is balanced")
 			}
-			n.rightRightRotate()
+			n.leftLeftRotate()
 		}
 	case balanceFactor < -1: // 右边长
-		if n.rightChild.calBalance() < 0 { // 左旋
-			n.leftLeftRotate()
-		} else if n.rightChild.calBalance() > 0 { // 左旋右旋
-			n.leftRightRotate()
+		if n.rightChild.calBalance() < 0 { // 右边长
+			n.rightRightRotate()
+		} else if n.rightChild.calBalance() > 0 { // 左边长
+			n.rightLeftRotate()
 		} else {
 			if isAddNode {
 				return errors.New("balance factor err: the right Child is balanced")
 			}
-			n.leftLeftRotate()
+			n.rightRightRotate()
 		}
 	}
 	return nil
