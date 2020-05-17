@@ -62,3 +62,11 @@ func (n *node) checkWhatKindRotation() byte {
 		return LRRotation
 	}
 }
+
+// return predecessor Or Successor, if return nil means the node has no child
+func (n *node) predecessorOrSuccessor() *node {
+	if n.Predecessor() != nil {
+		return n.Predecessor()
+	}
+	return n.Successor()
+}

@@ -152,25 +152,145 @@ func (t *RBTree) Find(order int) *node {
 
 // delete node
 // TODO
-func (t *RBTree) DeleteFromOrder(order int) {
-	// delete red no problem
-
-	// delete black node / RR conflict
-}
-
-// delete RedNode
-// TODO
-func (t *RBTree) deleteRedNode(redNode *node) {
-	switch {
-	case redNode.leftChild == nil && redNode.rightChild == nil: // no child
-		if redNode.isLeftChild() {
-			redNode.parent.leftChild = nil
-		} else {
-			redNode.parent.rightChild = nil
-		}
-	case redNode.leftChild != nil && redNode.rightChild == nil: // has left child
-
+func (t *RBTree) DeleteFromOrder(order int) error {
+	delNode := t.Find(order)
+	if delNode == nil {
+		return errors.New(NotExistNodeErr)
 	}
 
-	redNode = nil
+	// deletion cases
+	for loop := delNode; loop != nil; {
+		ps := loop.predecessorOrSuccessor()
+		switch {
+		case ps == nil && loop.color == RED:
+			// delete node
+			if loop.isLeftChild() {
+				loop.parent.leftChild = nil
+			} else {
+				loop.parent.rightChild = nil
+			}
+			loop = nil
+
+		case ps == nil && loop.color == BLACK:
+			if loop.isRootNode() { // root situation
+				t.root = nil
+				t.length--
+				return nil
+			}
+
+			// black leaf - no child, double black situation
+			t.recolorOrRotateDoubleBlackLeaf(loop)
+
+			// delete node
+			if loop.isLeftChild() {
+				loop.parent.leftChild = nil
+			} else {
+				loop.parent.rightChild = nil
+			}
+			loop = nil
+
+		case ps != nil:
+			loop.value = ps.value
+			loop.order = ps.order
+
+			loop = ps
+		}
+	}
+
+	t.length--
+	return nil
+}
+
+func (t *RBTree) recolorOrRotateDoubleBlackLeaf(blackLeaf *node) {
+	for doubleBlack := blackLeaf; doubleBlack != nil; {
+		sibling := doubleBlack.sibling()
+
+		switch {
+		case doubleBlack.isRootNode(): // double black is root node
+			doubleBlack = nil
+
+		case sibling.color == BLACK && doubleBlack.parent.color == RED &&
+			sibling.childrenAreBlack():
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			doubleBlack = nil
+
+		case sibling.color == BLACK && doubleBlack.parent.color == BLACK &&
+			sibling.childrenAreBlack():
+			// recolor
+			sibling.color = RED
+
+			doubleBlack = doubleBlack.parent
+
+		case sibling.color == RED && doubleBlack.parent.color == BLACK &&
+			sibling.childrenAreBlack():
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				doubleBlack.parent.rightRightRotate()
+			} else {
+				doubleBlack.parent.leftLeftRotate()
+			}
+			// doubleBlack = doubleBlack, double black is still here, apply other cases
+
+		case sibling.color == BLACK && doubleBlack.parent.color == BLACK &&
+			(doubleBlack.farSideOfTheNephew() == nil || doubleBlack.farSideOfTheNephew().color == BLACK) &&
+			(doubleBlack.nearSideOfTheNephew() != nil && doubleBlack.nearSideOfTheNephew().color == RED):
+			// recolor
+			doubleBlack.nearSideOfTheNephew().color = BLACK
+			sibling.color = RED
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				sibling.leftLeftRotate()
+			} else {
+				sibling.rightRightRotate()
+			}
+			// doubleBlack = doubleBlack, double black is still here, apply other cases
+
+		case sibling.color == BLACK &&
+			doubleBlack.farSideOfTheNephew() != nil &&
+			doubleBlack.farSideOfTheNephew().color == RED:
+
+			// recolor far side of its nephew
+			doubleBlack.farSideOfTheNephew().color = BLACK
+
+			// swap color
+			doubleBlack.parent.color, sibling.color = sibling.color, doubleBlack.parent.color
+
+			// rotation
+			if doubleBlack.isLeftChild() {
+				doubleBlack.parent.rightRightRotate()
+			} else {
+				doubleBlack.parent.leftLeftRotate()
+			}
+
+			doubleBlack = nil
+		}
+	}
+}
+
+// children are black color
+func (n *node) childrenAreBlack() bool {
+	return (n.leftChild == nil || n.leftChild.color == BLACK) &&
+		(n.rightChild == nil || n.rightChild.color == BLACK)
+}
+
+func (n *node) farSideOfTheNephew() *node {
+	if n.isLeftChild() {
+		return n.sibling().rightChild
+	}
+	return n.sibling().leftChild
+}
+
+func (n *node) nearSideOfTheNephew() *node {
+	if n.isLeftChild() {
+		return n.sibling().leftChild
+	}
+	return n.sibling().rightChild
 }
