@@ -63,6 +63,7 @@ func (t *RBTree) Add(order int, value interface{}) error {
 
 	// 添加到 parent 下
 	newNode := parent.addNewChild(value, order, isLeftChild)
+	t.length++
 
 	// check color
 	t.reColorAndRotation(newNode)
