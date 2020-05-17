@@ -130,7 +130,7 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	default:
 		parent = delNode.parent
 
-		if parent == nil { // root
+		if parent == nil { // delNode is root
 			avl.root = nil
 			delNode = nil
 			return nil

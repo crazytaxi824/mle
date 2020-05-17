@@ -151,6 +151,7 @@ func (t *RBTree) Find(order int) *node {
 }
 
 // delete node
+// TODO
 func (t *RBTree) DeleteFromOrder(order int) {
 	// delete red no problem
 
