@@ -5,20 +5,20 @@ import (
 )
 
 const (
-	ExistNodeErr    = "the node is already exist"
-	NotExistNodeErr = "the node is not in the tree"
+	ErrNodeExist    = "the node is already exist"
+	ErrNodeNotExist = "the node is not in the tree"
 
 	RED   = true
 	BLACK = false
 )
 
 const (
-	DONothing byte = iota // do nothing
-	RECOLOR               // needs to re-color
-	RRRotation
-	RLRotation
-	LLRotation
-	LRRotation
+	doNothing byte = iota // do nothing
+	reColor               // needs to re-color
+	rrRotation
+	rlRotation
+	llRotation
+	lrRotation
 )
 
 type node struct {
@@ -27,19 +27,19 @@ type node struct {
 	value                 interface{} // 内容
 	order                 int         // 排序号码
 	color                 bool        // 颜色, RED - true / BLACK - false
-	tree                  *RBTree     // 所属树
+	tree                  *rbTree     // 所属树
 }
 
-type RBTree struct {
+type rbTree struct {
 	root   *node
 	length int
 }
 
-func NewRBTree() *RBTree {
-	return &RBTree{}
+func NewTree() *rbTree {
+	return &rbTree{}
 }
 
-func (t *RBTree) Add(order int, value interface{}) error {
+func (t *rbTree) Add(order int, value interface{}) error {
 	// empty tree
 	if t.root == nil {
 		t.root = &node{
@@ -72,13 +72,13 @@ func (t *RBTree) Add(order int, value interface{}) error {
 }
 
 // true - add to leftChild , false add to rightChild
-func (t *RBTree) whoseChild(order int) (*node, bool, error) {
+func (t *rbTree) whoseChild(order int) (*node, bool, error) {
 	var result *node
 	var isLeftNode bool
 
 	for loop := t.root; loop != nil; {
 		if order == loop.order {
-			return nil, false, errors.New(ExistNodeErr)
+			return nil, false, errors.New(ErrNodeExist)
 		}
 
 		if order < loop.order { // left
@@ -95,10 +95,10 @@ func (t *RBTree) whoseChild(order int) (*node, bool, error) {
 }
 
 // recolor and rotation when add note to the tree
-func (t *RBTree) addNodeReColorAndRotation(_node *node) {
+func (t *rbTree) addNodeReColorAndRotation(_node *node) {
 	for loop := _node; loop != nil; {
 		switch loop.checkWhatToDo() {
-		case RECOLOR:
+		case reColor:
 			loop.parent.color = !loop.parent.color
 			loop.parent.sibling().color = !loop.parent.sibling().color
 			if !loop.parent.parent.isRootNode() {
@@ -107,25 +107,25 @@ func (t *RBTree) addNodeReColorAndRotation(_node *node) {
 
 			loop = loop.parent.parent
 
-		case LLRotation:
+		case llRotation:
 			loop.parent.color = !loop.parent.color
 			loop.parent.parent.color = !loop.parent.parent.color
 			loop.parent.parent.leftLeftRotate()
 			loop = nil
 
-		case RRRotation:
+		case rrRotation:
 			loop.parent.color = !loop.parent.color
 			loop.parent.parent.color = !loop.parent.parent.color
 			loop.parent.parent.rightRightRotate()
 			loop = nil
 
-		case LRRotation:
+		case lrRotation:
 			loop.color = !loop.color
 			loop.parent.parent.color = !loop.parent.parent.color
 			loop.parent.parent.leftRightRotate()
 			loop = nil
 
-		case RLRotation:
+		case rlRotation:
 			loop.color = !loop.color
 			loop.parent.parent.color = !loop.parent.parent.color
 			loop.parent.parent.rightLeftRotate()
@@ -138,7 +138,7 @@ func (t *RBTree) addNodeReColorAndRotation(_node *node) {
 }
 
 // find node from order number, could be nil if the order is not exist
-func (t *RBTree) Find(order int) *node {
+func (t *rbTree) Find(order int) *node {
 	var result *node
 	for result = t.root; result != nil && result.order != order; {
 		if order < result.order { // 左边
@@ -152,11 +152,11 @@ func (t *RBTree) Find(order int) *node {
 }
 
 // delete node
-func (t *RBTree) DeleteFromOrder(order int) error {
+func (t *rbTree) DeleteFromOrder(order int) error {
 	// find the node needs to be deleted
 	delNode := t.Find(order)
 	if delNode == nil {
-		return errors.New(NotExistNodeErr)
+		return errors.New(ErrNodeNotExist)
 	}
 
 	// deletion cases
@@ -205,12 +205,12 @@ func (t *RBTree) DeleteFromOrder(order int) error {
 	return nil
 }
 
-func (t *RBTree) Delete(n *node) error {
+func (t *rbTree) Delete(n *node) error {
 	return t.DeleteFromOrder(n.order)
 }
 
 // 6 cases of the DOUBLE BLACK situation
-func (t *RBTree) casesOfDoubleBlackSituation(blackLeaf *node) {
+func (t *rbTree) casesOfDoubleBlackSituation(blackLeaf *node) {
 	for doubleBlack := blackLeaf; doubleBlack != nil && !doubleBlack.isRootNode(); {
 		sibling := doubleBlack.sibling()
 
@@ -285,17 +285,17 @@ func (t *RBTree) casesOfDoubleBlackSituation(blackLeaf *node) {
 }
 
 // total number of nodes in the tree
-func (t *RBTree) Size() int {
+func (t *rbTree) Size() int {
 	return t.length
 }
 
 // root node of the tree
-func (t *RBTree) Root() *node {
+func (t *rbTree) Root() *node {
 	return t.root
 }
 
 // smallest node in the tree
-func (t *RBTree) Smallest() *node {
+func (t *rbTree) Smallest() *node {
 	var smallest *node
 	for loop := t.root; loop != nil; loop = loop.leftChild {
 		smallest = loop
@@ -304,7 +304,7 @@ func (t *RBTree) Smallest() *node {
 }
 
 // biggest node in the tree
-func (t *RBTree) Biggest() *node {
+func (t *rbTree) Biggest() *node {
 	var biggest *node
 	for loop := t.root; loop != nil; loop = loop.rightChild {
 		biggest = loop
@@ -313,7 +313,7 @@ func (t *RBTree) Biggest() *node {
 }
 
 // sort the nodes in ASC order
-func (t *RBTree) Sort() []*node {
+func (t *rbTree) Sort() []*node {
 	result := make([]*node, 0, t.length)
 	smallest := t.Smallest()
 

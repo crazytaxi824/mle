@@ -37,7 +37,7 @@ func (n *node) Parent() *node {
 }
 
 // the tree which the node belongs to
-func (n *node) Tree() *RBTree {
+func (n *node) Tree() *rbTree {
 	return n.tree
 }
 

@@ -11,7 +11,7 @@ func max(a, b int) int {
 	return b
 }
 
-// print all the nodes in the tree
+// print all the nodes with relationships in the tree.
 // this function is for test only.
 func PrintAllNode(_node *node) {
 	if _node == nil {

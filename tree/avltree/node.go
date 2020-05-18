@@ -36,7 +36,7 @@ func (n *node) Parent() *node {
 }
 
 // the tree which the node belongs to
-func (n *node) Tree() *AVLTree {
+func (n *node) Tree() *avlTree {
 	return n.tree
 }
 
