@@ -92,22 +92,11 @@ func BenchmarkRBTree_Find(b *testing.B) {
 }
 
 // DELETE
-func BenchmarkSlice_Delete(b *testing.B) {
-	s := make([]int, 10000)
-	for i := 0; i < 10000; i++ {
-		s[i] = i
-	}
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		_ = append(s[:5000], s[5001:]...)
-	}
-	b.StopTimer()
-	b.ReportAllocs()
-}
+const size = 1000000
 
 func BenchmarkAVLTree_Delete(b *testing.B) {
 	avl := avltree.NewAVLTree()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < size; i++ {
 		err := avl.Add(i, struct{}{})
 		if err != nil {
 			b.Error(err)
@@ -115,7 +104,7 @@ func BenchmarkAVLTree_Delete(b *testing.B) {
 		}
 	}
 	b.StartTimer()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < size; i++ {
 		err := avl.DeleteFromOrder(i)
 		if err != nil {
 			b.Error(err)
@@ -128,7 +117,7 @@ func BenchmarkAVLTree_Delete(b *testing.B) {
 
 func BenchmarkRBTree_Delete(b *testing.B) {
 	rb := rbtree.NewRBTree()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < size; i++ {
 		err := rb.Add(i, struct{}{})
 		if err != nil {
 			b.Error(err)
@@ -136,7 +125,7 @@ func BenchmarkRBTree_Delete(b *testing.B) {
 		}
 	}
 	b.StartTimer()
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < size; i++ {
 		err := rb.DeleteFromOrder(i)
 		if err != nil {
 			b.Error(err)

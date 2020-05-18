@@ -109,47 +109,40 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 	var parent *node
 
 	switch {
-	case delNode.leftChild != nil && delNode.rightChild != nil: // has both child
+	case delNode.leftChild == nil && delNode.rightChild == nil: // has both child
+		parent = delNode.parent
+
+		if parent == nil { // delNode is root
+			avl.root = nil
+			delNode = nil
+			break
+		}
+
+		if delNode.isLeftChild() {
+			delNode.parent.leftChild = nil
+		} else {
+			delNode.parent.rightChild = nil
+		}
+		delNode = nil
+
+	default:
 		// find replace
-		replaceNode := delNode.Predecessor()
+		replaceNode := delNode.predecessorOrSuccessor()
+
+		parent = replaceNode.parent
+
+		// 替换value，order，不替换 depth，left，right child
+		delNode.order = replaceNode.order
+		delNode.value = replaceNode.value
 
 		// 删除 replaceNode
-		parent = replaceNode.parent
 		if replaceNode.isLeftChild() {
 			parent.leftChild = nil
 		} else {
 			parent.rightChild = nil
 		}
 
-		// 替换value，order，不替换 depth，left，right child
-		delNode.order = replaceNode.order
-		delNode.value = replaceNode.value
-
 		replaceNode = nil
-
-	default:
-		parent = delNode.parent
-
-		if parent == nil { // delNode is root
-			avl.root = nil
-			delNode = nil
-			return nil
-		}
-
-		if delNode.leftChild != nil {
-			reBoundNodes(parent, delNode.leftChild, delNode.isLeftChild())
-		} else if delNode.rightChild != nil {
-			reBoundNodes(parent, delNode.rightChild, delNode.isLeftChild())
-		} else {
-			// 删除自己
-			if delNode.isLeftChild() {
-				parent.leftChild = nil
-			} else {
-				parent.rightChild = nil
-			}
-		}
-
-		delNode = nil
 	}
 
 	avl.length--
