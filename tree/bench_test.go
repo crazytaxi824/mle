@@ -20,7 +20,7 @@ func BenchmarkSlice_Append(b *testing.B) {
 
 func BenchmarkAVLTree_ADD(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		avl := avltree.NewAVLTree()
+		avl := avltree.NewTree()
 		for i := 0; i < 1000; i++ {
 			err := avl.Add(i, struct{}{})
 			if err != nil {
@@ -34,7 +34,7 @@ func BenchmarkAVLTree_ADD(b *testing.B) {
 
 func BenchmarkRBTree_ADD(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		rb := rbtree.NewRBTree()
+		rb := rbtree.NewTree()
 		for i := 0; i < 1000; i++ {
 			err := rb.Add(i, struct{}{})
 			if err != nil {
@@ -62,7 +62,7 @@ func BenchmarkSlice_Find(b *testing.B) {
 }
 
 func BenchmarkAVLTree_Find(b *testing.B) {
-	avl := avltree.NewAVLTree()
+	avl := avltree.NewTree()
 	for i := 0; i < 1000; i++ {
 		err := avl.Add(i, struct{}{})
 		if err != nil {
@@ -77,7 +77,7 @@ func BenchmarkAVLTree_Find(b *testing.B) {
 }
 
 func BenchmarkRBTree_Find(b *testing.B) {
-	rb := rbtree.NewRBTree()
+	rb := rbtree.NewTree()
 	for i := 0; i < 1000; i++ {
 		err := rb.Add(i, struct{}{})
 		if err != nil {
@@ -95,7 +95,7 @@ func BenchmarkRBTree_Find(b *testing.B) {
 const size = 1000000
 
 func BenchmarkAVLTree_Delete(b *testing.B) {
-	avl := avltree.NewAVLTree()
+	avl := avltree.NewTree()
 	for i := 0; i < size; i++ {
 		err := avl.Add(i, struct{}{})
 		if err != nil {
@@ -116,7 +116,7 @@ func BenchmarkAVLTree_Delete(b *testing.B) {
 }
 
 func BenchmarkRBTree_Delete(b *testing.B) {
-	rb := rbtree.NewRBTree()
+	rb := rbtree.NewTree()
 	for i := 0; i < size; i++ {
 		err := rb.Add(i, struct{}{})
 		if err != nil {
@@ -140,7 +140,7 @@ func BenchmarkRBTree_Delete(b *testing.B) {
 var s = []int{100, 150, 50, 30, 70, 120, 20, 10, 40, 80, 81, 82, 83, 84, 85, 86, 87, 88}
 
 func BenchmarkAVLTree_Sort(b *testing.B) {
-	tree := avltree.NewAVLTree()
+	tree := avltree.NewTree()
 	for _, v := range s {
 		err := tree.Add(v, struct{}{})
 		if err != nil {
@@ -155,7 +155,7 @@ func BenchmarkAVLTree_Sort(b *testing.B) {
 }
 
 func BenchmarkRBTree_Sort(b *testing.B) {
-	tree := rbtree.NewRBTree()
+	tree := rbtree.NewTree()
 	for _, v := range s {
 		err := tree.Add(v, struct{}{})
 		if err != nil {

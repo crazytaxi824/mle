@@ -9,7 +9,7 @@ var s = []int{100, 150, 50, 30, 70, 120, 20, 10, 40, 80, 81, 82, 83, 84, 85, 86,
 
 // add
 func TestAVLTree_Add(t *testing.T) {
-	tree := NewAVLTree()
+	tree := NewTree()
 	for _, v := range s {
 		err := tree.Add(v, struct{}{})
 		if err != nil {
@@ -36,7 +36,7 @@ func TestAVLTree_Add(t *testing.T) {
 
 // delete
 func TestAVLTree_Delete(t *testing.T) {
-	tree := NewAVLTree()
+	tree := NewTree()
 	for _, v := range s {
 		err := tree.Add(v, struct{}{})
 		if err != nil {
@@ -60,7 +60,7 @@ func TestAVLTree_Delete(t *testing.T) {
 
 func TestAVLTree_Delete2(t *testing.T) {
 	ss := []int{100, 50, 150, 70, 30, 40, 20, 10, 25}
-	tree := NewAVLTree()
+	tree := NewTree()
 	for _, v := range ss {
 		err := tree.Add(v, struct{}{})
 		if err != nil {
@@ -76,7 +76,7 @@ func TestAVLTree_Delete2(t *testing.T) {
 }
 
 func TestDeleteAVLRoot(t *testing.T) {
-	tree := NewAVLTree()
+	tree := NewTree()
 	for i := 0; i < 5; i++ {
 		tree.Add(i, struct{}{})
 	}
@@ -94,7 +94,7 @@ func TestDeleteAVLRoot(t *testing.T) {
 
 // sort
 func TestAVLTree_Sort(t *testing.T) {
-	tree := NewAVLTree()
+	tree := NewTree()
 	for _, v := range s {
 		err := tree.Add(v, v)
 		if err != nil {

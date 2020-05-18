@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	ExistNodeErr    = "the node is already exist"
-	NotExistNodeErr = "the node is not in the tree"
+	ErrNodeExist    = "the node is already exist"
+	ErrNodeNotExist = "the node is not in the tree"
 )
 
 type node struct {
@@ -24,7 +24,7 @@ type avlTree struct {
 }
 
 // duplicate order number is not allowed here
-func NewAVLTree() *avlTree {
+func NewTree() *avlTree {
 	return &avlTree{}
 }
 
@@ -68,7 +68,7 @@ func (avl *avlTree) whoseChild(order int) (*node, bool, error) {
 
 	for loop := avl.root; loop != nil; {
 		if order == loop.order {
-			return nil, false, errors.New(ExistNodeErr)
+			return nil, false, errors.New(ErrNodeExist)
 		}
 
 		if order < loop.order { // left
@@ -103,7 +103,7 @@ func (avl *avlTree) Find(order int) *node {
 func (avl *avlTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
-		return errors.New(NotExistNodeErr)
+		return errors.New(ErrNodeNotExist)
 	}
 
 	var parent *node
