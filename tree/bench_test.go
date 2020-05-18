@@ -135,3 +135,36 @@ func BenchmarkRBTree_Delete(b *testing.B) {
 	b.StopTimer()
 	b.ReportAllocs()
 }
+
+// sort
+var s = []int{100, 150, 50, 30, 70, 120, 20, 10, 40, 80, 81, 82, 83, 84, 85, 86, 87, 88}
+
+func BenchmarkAVLTree_Sort(b *testing.B) {
+	tree := avltree.NewAVLTree()
+	for _, v := range s {
+		err := tree.Add(v, struct{}{})
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+	for i := 0; i < b.N; i++ {
+		tree.Sort()
+	}
+	b.ReportAllocs()
+}
+
+func BenchmarkRBTree_Sort(b *testing.B) {
+	tree := rbtree.NewRBTree()
+	for _, v := range s {
+		err := tree.Add(v, struct{}{})
+		if err != nil {
+			b.Error(err)
+			return
+		}
+	}
+	for i := 0; i < b.N; i++ {
+		tree.Sort()
+	}
+	b.ReportAllocs()
+}

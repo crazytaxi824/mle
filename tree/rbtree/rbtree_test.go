@@ -6,6 +6,7 @@ import (
 
 var src = []int{10, 18, 7, 15, 16, 30, 25, 40, 60, 2, 1, 70}
 
+// add
 func TestAdd(t *testing.T) {
 	tree := NewRBTree()
 	for _, v := range src {
@@ -21,6 +22,7 @@ func TestAdd(t *testing.T) {
 
 var del = []int{50, 20, 65, 15, 35, 55, 70, 68, 80, 90}
 
+// delete
 func TestDelete(t *testing.T) {
 	tree := NewRBTree()
 	for _, v := range del {
@@ -54,5 +56,23 @@ func TestDeleteRBRoot(t *testing.T) {
 			return
 		}
 		t.Log(tree.Size())
+	}
+}
+
+// sort
+func TestRbTree_Sort(t *testing.T) {
+	tree := NewRBTree()
+	for _, v := range src {
+		err := tree.Add(v, v)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	PrintAllNode(tree.root)
+
+	for _, v := range tree.Sort() {
+		t.Log(v.order)
 	}
 }

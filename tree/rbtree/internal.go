@@ -44,22 +44,22 @@ func (n *node) checkWhatToDo() byte {
 		if n.parent.sibling() == nil || n.parent.sibling().color == BLACK { // sibling is nil or BLACK
 			return n.checkWhatKindRotation()
 		}
-		return RECOLOR // sibling is RED
+		return reColor // sibling is RED
 	}
-	return DONothing
+	return doNothing
 }
 
 // RR RL LL LR rotation
 func (n *node) checkWhatKindRotation() byte {
 	switch {
 	case n.parent.isLeftChild() && n.isLeftChild():
-		return LLRotation
+		return llRotation
 	case !n.parent.isLeftChild() && !n.isLeftChild():
-		return RRRotation
+		return rrRotation
 	case !n.parent.isLeftChild() && n.isLeftChild():
-		return RLRotation
+		return rlRotation
 	default:
-		return LRRotation
+		return lrRotation
 	}
 }
 

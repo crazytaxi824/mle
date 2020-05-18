@@ -1,7 +1,6 @@
 package avltree
 
 import (
-	"sort"
 	"testing"
 )
 
@@ -76,6 +75,23 @@ func TestAVLTree_Delete2(t *testing.T) {
 	PrintAllNode(tree.root)
 }
 
+func TestDeleteAVLRoot(t *testing.T) {
+	tree := NewAVLTree()
+	for i := 0; i < 5; i++ {
+		tree.Add(i, struct{}{})
+	}
+	t.Log(tree.Size())
+
+	for i := 0; i < 5; i++ {
+		err := tree.DeleteFromOrder(i)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(tree.Size())
+	}
+}
+
 // sort
 func TestAVLTree_Sort(t *testing.T) {
 	tree := NewAVLTree()
@@ -91,106 +107,5 @@ func TestAVLTree_Sort(t *testing.T) {
 
 	for _, v := range tree.Sort() {
 		t.Log(v.order)
-	}
-}
-
-// search
-func BenchmarkSearchInAVLTree(b *testing.B) {
-	tree := NewAVLTree()
-	for i := 0; i < 1000; i++ {
-		err := tree.Add(i, struct{}{})
-		if err != nil {
-			b.Error(err)
-			return
-		}
-	}
-
-	for i := 0; i < b.N; i++ {
-		n := tree.Find(900)
-		_, ok := n.value.(struct{})
-		if !ok {
-			b.Fail()
-		}
-	}
-	b.ReportAllocs()
-}
-
-func BenchmarkSearchInSlice(b *testing.B) {
-	ss := make([]int, 1000)
-	for i := 0; i < 1000; i++ {
-		ss[i] = i
-	}
-
-	for i := 0; i < b.N; i++ {
-		for _, v := range ss {
-			if v == 900 {
-
-			}
-		}
-	}
-	b.ReportAllocs()
-}
-
-// add
-func BenchmarkAVLTree_Add(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		tree := NewAVLTree()
-		for n := 0; n < 1000; n++ {
-			err := tree.Add(n, struct{}{})
-			if err != nil {
-				b.Error(err)
-			}
-		}
-	}
-	b.ReportAllocs()
-}
-
-func BenchmarkAppendInSlice(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var ss []int
-		for n := 0; n < 1000; n++ {
-			_ = append(ss, n)
-		}
-	}
-	b.ReportAllocs()
-}
-
-// sort
-func BenchmarkAVLTree_Sort(b *testing.B) {
-	tree := NewAVLTree()
-	for _, v := range s {
-		err := tree.Add(v, struct{}{})
-		if err != nil {
-			b.Error(err)
-			return
-		}
-	}
-	for i := 0; i < b.N; i++ {
-		tree.Sort()
-	}
-	b.ReportAllocs()
-}
-
-func BenchmarkSortSlice(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		sort.Ints(s)
-	}
-	b.ReportAllocs()
-}
-
-func TestDeleteAVLRoot(t *testing.T) {
-	tree := NewAVLTree()
-	for i := 0; i < 5; i++ {
-		tree.Add(i, struct{}{})
-	}
-	t.Log(tree.Size())
-
-	for i := 0; i < 5; i++ {
-		err := tree.DeleteFromOrder(i)
-		if err != nil {
-			t.Error(err)
-			return
-		}
-		t.Log(tree.Size())
 	}
 }

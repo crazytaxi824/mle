@@ -75,17 +75,6 @@ func (n *node) updateDepth() *node {
 	return n.parent
 }
 
-// 检查树中的节点是否平衡
-func (avl *AVLTree) checkBalances(_node *node) {
-	loop := _node
-	for loop != nil { // 优化不用一直检测到root
-		// balance factor
-		loop.balanceFactor()
-
-		loop = loop.updateDepth()
-	}
-}
-
 // return predecessor Or Successor, if return nil means the node has no child
 func (n *node) predecessorOrSuccessor() *node {
 	if n.Predecessor() != nil {

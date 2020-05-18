@@ -15,21 +15,21 @@ type node struct {
 	depth                 int         // 自己的深度，最下层默认为1
 	value                 interface{} // 内容
 	order                 int         // 排序号码
-	tree                  *AVLTree    // 所属树
+	tree                  *avlTree    // 所属树
 }
 
-type AVLTree struct {
+type avlTree struct {
 	root   *node
 	length int
 }
 
 // duplicate order number is not allowed here
-func NewAVLTree() *AVLTree {
-	return &AVLTree{}
+func NewAVLTree() *avlTree {
+	return &avlTree{}
 }
 
 // add node to the tree
-func (avl *AVLTree) Add(order int, value interface{}) error {
+func (avl *avlTree) Add(order int, value interface{}) error {
 	// 添加第一个节点
 	if avl.root == nil {
 		avl.root = &node{
@@ -62,7 +62,7 @@ func (avl *AVLTree) Add(order int, value interface{}) error {
 }
 
 // true - add to leftChild , false add to rightChild
-func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
+func (avl *avlTree) whoseChild(order int) (*node, bool, error) {
 	var result *node
 	var isLeftNode bool
 
@@ -85,7 +85,7 @@ func (avl *AVLTree) whoseChild(order int) (*node, bool, error) {
 }
 
 // find node from order number, could be nil if the order is not exist
-func (avl *AVLTree) Find(order int) *node {
+func (avl *avlTree) Find(order int) *node {
 	var result *node
 
 	for result = avl.root; result != nil && result.order != order; {
@@ -100,7 +100,7 @@ func (avl *AVLTree) Find(order int) *node {
 }
 
 // delete node from order number
-func (avl *AVLTree) DeleteFromOrder(order int) error {
+func (avl *avlTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
 		return errors.New(NotExistNodeErr)
@@ -154,17 +154,17 @@ func (avl *AVLTree) DeleteFromOrder(order int) error {
 }
 
 // delete node
-func (avl *AVLTree) Delete(n *node) error {
+func (avl *avlTree) Delete(n *node) error {
 	return avl.DeleteFromOrder(n.order)
 }
 
 // total number of nodes in the tree
-func (avl *AVLTree) Size() int {
+func (avl *avlTree) Size() int {
 	return avl.length
 }
 
 // total depth of the tree
-func (avl *AVLTree) Depth() int {
+func (avl *avlTree) Depth() int {
 	if avl.root == nil {
 		return 0
 	}
@@ -172,12 +172,12 @@ func (avl *AVLTree) Depth() int {
 }
 
 // root node of the tree
-func (avl *AVLTree) Root() *node {
+func (avl *avlTree) Root() *node {
 	return avl.root
 }
 
 // smallest node in the tree
-func (avl *AVLTree) Smallest() *node {
+func (avl *avlTree) Smallest() *node {
 	var smallest *node
 	for loop := avl.root; loop != nil; loop = loop.leftChild {
 		smallest = loop
@@ -186,7 +186,7 @@ func (avl *AVLTree) Smallest() *node {
 }
 
 // biggest node in the tree
-func (avl *AVLTree) Biggest() *node {
+func (avl *avlTree) Biggest() *node {
 	var biggest *node
 	for loop := avl.root; loop != nil; loop = loop.rightChild {
 		biggest = loop
@@ -195,7 +195,7 @@ func (avl *AVLTree) Biggest() *node {
 }
 
 // sort the nodes in ASC order
-func (avl *AVLTree) Sort() []*node {
+func (avl *avlTree) Sort() []*node {
 	result := make([]*node, 0, avl.length)
 	smallest := avl.Smallest()
 
@@ -231,5 +231,16 @@ func (n *node) findLeftParent() *node {
 		} else {
 			return loop.parent
 		}
+	}
+}
+
+// 检查树中的节点是否平衡
+func (avl *avlTree) checkBalances(_node *node) {
+	loop := _node
+	for loop != nil { // 优化不用一直检测到root
+		// balance factor
+		loop.balanceFactor()
+
+		loop = loop.updateDepth()
 	}
 }
