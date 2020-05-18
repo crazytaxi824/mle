@@ -177,3 +177,20 @@ func BenchmarkSortSlice(b *testing.B) {
 	}
 	b.ReportAllocs()
 }
+
+func TestDeleteAVLRoot(t *testing.T) {
+	tree := NewAVLTree()
+	for i := 0; i < 5; i++ {
+		tree.Add(i, struct{}{})
+	}
+	t.Log(tree.Size())
+
+	for i := 0; i < 5; i++ {
+		err := tree.DeleteFromOrder(i)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		t.Log(tree.Size())
+	}
+}
