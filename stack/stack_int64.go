@@ -129,8 +129,8 @@ func (s *int64Stack) Len() int {
 	return len(s.items)
 }
 
-// 返回所有 element 到 slice
-func (s *int64Stack) Elements() []int64 {
+// this is for test only
+func (s *int64Stack) elements() []int64 {
 	return s.items
 }
 
@@ -168,6 +168,61 @@ func (s *int64Stack) IsEmpty() bool {
 // 位置 1 代表栈顶，即最后一个元素。
 // 位置 -1 代表没有找到该元素。
 func (s *int64Stack) Search(n int64) int {
+	switch {
+	case s.allowDupl == false && s.stackType == ASCStack:
+		return s.searchASCDichotomy(n)
+	case s.allowDupl == false && s.stackType == DESCStack:
+		return s.searchDESCDichotomy(n)
+	}
+	return s.searchNormalStack(n)
+}
+
+// 二分法查找
+func (s *int64Stack) searchASCDichotomy(n int64) int {
+	lenS := len(s.items)
+
+	// [start, end)
+	for start, end := 0, lenS; start < end; {
+		index := (start + end) / 2
+		switch {
+		case s.items[index] == n:
+			// 找到之后遍历相同元素，allow duplicated element
+			for index < lenS && s.items[index] == n {
+				index++
+			}
+			return lenS - index + 1
+		case s.items[index] > n:
+			end = index
+		case s.items[index] < n:
+			start = index + 1
+		}
+	}
+	return -1
+}
+
+func (s *int64Stack) searchDESCDichotomy(n int64) int {
+	lenS := len(s.items)
+
+	// [start, end)
+	for start, end := 0, lenS; start < end; {
+		index := (start + end) / 2
+		switch {
+		case s.items[index] == n:
+			// 找到之后遍历相同元素，allow duplicated element
+			for index < lenS && s.items[index] == n {
+				index++
+			}
+			return lenS - index + 1
+		case s.items[index] < n:
+			end = index
+		case s.items[index] > n:
+			start = index + 1
+		}
+	}
+	return -1
+}
+
+func (s *int64Stack) searchNormalStack(n int64) int {
 	lenS := len(s.items)
 	for i := lenS - 1; i >= 0; i-- {
 		if s.items[i] == n {
