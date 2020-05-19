@@ -17,15 +17,19 @@ func NewInt64ASCStack(allowDupl bool) *int64ASCStack {
 	return &int64ASCStack{allowDupl: allowDupl}
 }
 
+// 返回 stack 长度
 func (s *int64ASCStack) Len() int {
 	return len(s.items)
 }
 
+// 返回所有 element 到 slice
 func (s *int64ASCStack) Elements() []int64 {
 	return s.items
 }
 
 // 单调栈，会踢出大于自己的元素
+// n 表示有多少元素被踢出
+// return n means how many items has been removed from stack
 func (s *int64ASCStack) Push(i int64) (n int, res []int64) {
 	index := -1
 	for k := range s.items {
@@ -47,10 +51,9 @@ func (s *int64ASCStack) Push(i int64) (n int, res []int64) {
 		return 0, nil
 	}
 
-	n = len(s.items) - index
 	res = s.items[index:]
 	s.items = append(s.items[:index:index], i)
-	return n, res
+	return len(res), res
 }
 
 // 后进先出，返回栈顶元素
@@ -70,13 +73,15 @@ func (s *int64ASCStack) Peek() (int64, error) {
 		return 0, errors.New(ErrEmptyStack)
 	}
 
-	return s.items[0], nil
+	return s.items[len(s.items)-1], nil
 }
 
+// 重置 stack
 func (s *int64ASCStack) Reset() {
 	s.items = make([]int64, 0)
 }
 
+// 判断 stack 是否为空
 func (s *int64ASCStack) IsEmpty() bool {
 	return len(s.items) == 0
 }
@@ -107,15 +112,19 @@ func NewInt64DESCStack(allowDupl bool) *int64DESCStack {
 	return &int64DESCStack{allowDupl: allowDupl}
 }
 
+// 返回 stack 长度
 func (s *int64DESCStack) Len() int {
 	return len(s.items)
 }
 
+// 返回所有 element 到 slice
 func (s *int64DESCStack) Elements() []int64 {
 	return s.items
 }
 
-// 单调栈，会踢出小于自己的元素
+// 单调栈，会踢出小于自己的元素,
+// n 表示有多少元素被踢出
+// return n means how many items has been removed from stack
 func (s *int64DESCStack) Push(i int64) (n int, res []int64) {
 	index := -1
 	for k := range s.items {
@@ -137,10 +146,9 @@ func (s *int64DESCStack) Push(i int64) (n int, res []int64) {
 		return 0, nil
 	}
 
-	n = len(s.items) - index
 	res = s.items[index:]
 	s.items = append(s.items[:index:index], i)
-	return n, res
+	return len(res), res
 }
 
 // 后进先出，返回栈顶元素
@@ -160,13 +168,15 @@ func (s *int64DESCStack) Peek() (int64, error) {
 		return 0, errors.New(ErrEmptyStack)
 	}
 
-	return s.items[0], nil
+	return s.items[len(s.items)-1], nil
 }
 
+// 重置 stack
 func (s *int64DESCStack) Reset() {
 	s.items = make([]int64, 0)
 }
 
+// 判断 stack 是否为空
 func (s *int64DESCStack) IsEmpty() bool {
 	return len(s.items) == 0
 }
