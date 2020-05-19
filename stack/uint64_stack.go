@@ -5,15 +5,9 @@ import (
 	"errors"
 )
 
-const (
-	NormalStack = iota
-	ASCStack
-	DESCStack
-)
-
 // 单调递增栈
-type int64Stack struct {
-	items []int64
+type uint64Stack struct {
+	items []uint64
 
 	// if its true then allow duplicated elements in the stack
 	allowDupl bool
@@ -22,12 +16,7 @@ type int64Stack struct {
 	stackType uint8
 }
 
-type Option struct {
-	AllowDuplicate bool
-	StackType      uint8
-}
-
-func NewInt64Stack(opt *Option) *int64Stack {
+func NewUint64Stack(opt *Option) *uint64Stack {
 	if opt == nil {
 		opt = &Option{
 			AllowDuplicate: true,
@@ -35,13 +24,13 @@ func NewInt64Stack(opt *Option) *int64Stack {
 		}
 	}
 
-	return &int64Stack{allowDupl: opt.AllowDuplicate, stackType: opt.StackType}
+	return &uint64Stack{allowDupl: opt.AllowDuplicate, stackType: opt.StackType}
 }
 
 // 单调栈，会踢出大于自己的元素
 // n 表示有多少元素被踢出
 // return n means how many items has been removed from stack
-func (s *int64Stack) Push(i int64) (n int, res []int64) {
+func (s *uint64Stack) Push(i uint64) (n int, res []uint64) {
 	switch s.stackType {
 	case ASCStack:
 		return s.pushToASCStack(i)
@@ -53,7 +42,7 @@ func (s *int64Stack) Push(i int64) (n int, res []int64) {
 	return s.pushToNormalStack(i)
 }
 
-func (s *int64Stack) pushToASCStack(i int64) (n int, res []int64) {
+func (s *uint64Stack) pushToASCStack(i uint64) (n int, res []uint64) {
 	index := -1
 
 	if s.allowDupl {
@@ -82,7 +71,7 @@ func (s *int64Stack) pushToASCStack(i int64) (n int, res []int64) {
 	return len(res), res
 }
 
-func (s *int64Stack) pushToDESCStack(i int64) (n int, res []int64) {
+func (s *uint64Stack) pushToDESCStack(i uint64) (n int, res []uint64) {
 	index := -1
 
 	if s.allowDupl {
@@ -111,11 +100,11 @@ func (s *int64Stack) pushToDESCStack(i int64) (n int, res []int64) {
 	return len(res), res
 }
 
-func (s *int64Stack) pushToNormalStack(i int64) (n int, res []int64) {
+func (s *uint64Stack) pushToNormalStack(i uint64) (n int, res []uint64) {
 	if !s.allowDupl {
 		for k := range s.items {
 			if s.items[k] == i {
-				return 1, []int64{i}
+				return 1, []uint64{i}
 			}
 		}
 	}
@@ -125,17 +114,17 @@ func (s *int64Stack) pushToNormalStack(i int64) (n int, res []int64) {
 }
 
 // 返回 stack 长度
-func (s *int64Stack) Len() int {
+func (s *uint64Stack) Len() int {
 	return len(s.items)
 }
 
 // this is for test only
-func (s *int64Stack) elements() []int64 {
+func (s *uint64Stack) elements() []uint64 {
 	return s.items
 }
 
 // 后进先出，返回栈顶元素
-func (s *int64Stack) Pop() (int64, error) {
+func (s *uint64Stack) Pop() (uint64, error) {
 	if len(s.items) == 0 {
 		return 0, errors.New(ErrEmptyStack)
 	}
@@ -146,7 +135,7 @@ func (s *int64Stack) Pop() (int64, error) {
 }
 
 // 返回栈顶元素，但是不删除该元素
-func (s *int64Stack) Peek() (int64, error) {
+func (s *uint64Stack) Peek() (uint64, error) {
 	if len(s.items) == 0 {
 		return 0, errors.New(ErrEmptyStack)
 	}
@@ -155,19 +144,19 @@ func (s *int64Stack) Peek() (int64, error) {
 }
 
 // 重置 stack
-func (s *int64Stack) Reset() {
-	s.items = make([]int64, 0)
+func (s *uint64Stack) Reset() {
+	s.items = make([]uint64, 0)
 }
 
 // 判断 stack 是否为空
-func (s *int64Stack) IsEmpty() bool {
+func (s *uint64Stack) IsEmpty() bool {
 	return len(s.items) == 0
 }
 
 // 返回对象距离栈顶最近的位置(可能有多个相同的元素)
 // 位置 1 代表栈顶，即最后一个元素。
 // 位置 -1 代表没有找到该元素。
-func (s *int64Stack) Search(n int64) int {
+func (s *uint64Stack) Search(n uint64) int {
 	switch {
 	case s.allowDupl == false && s.stackType == ASCStack:
 		return s.searchASCDichotomy(n)
@@ -178,7 +167,7 @@ func (s *int64Stack) Search(n int64) int {
 }
 
 // 二分法查找
-func (s *int64Stack) searchASCDichotomy(n int64) int {
+func (s *uint64Stack) searchASCDichotomy(n uint64) int {
 	lenS := len(s.items)
 
 	// [start, end)
@@ -200,7 +189,7 @@ func (s *int64Stack) searchASCDichotomy(n int64) int {
 	return -1
 }
 
-func (s *int64Stack) searchDESCDichotomy(n int64) int {
+func (s *uint64Stack) searchDESCDichotomy(n uint64) int {
 	lenS := len(s.items)
 
 	// [start, end)
@@ -222,7 +211,7 @@ func (s *int64Stack) searchDESCDichotomy(n int64) int {
 	return -1
 }
 
-func (s *int64Stack) searchNormalStack(n int64) int {
+func (s *uint64Stack) searchNormalStack(n uint64) int {
 	lenS := len(s.items)
 	for i := lenS - 1; i >= 0; i-- {
 		if s.items[i] == n {
@@ -235,7 +224,7 @@ func (s *int64Stack) searchNormalStack(n int64) int {
 
 // for range element,
 // if fn return false, stop range.
-func (s *int64Stack) Range(fn func(element int64) bool) {
+func (s *uint64Stack) Range(fn func(element uint64) bool) {
 	for k := range s.items {
 		if !fn(s.items[k]) {
 			return
@@ -244,7 +233,7 @@ func (s *int64Stack) Range(fn func(element int64) bool) {
 }
 
 // return elements by index, start from 0
-func (s *int64Stack) Index(index int) (int64, error) {
+func (s *uint64Stack) Index(index int) (uint64, error) {
 	if index >= len(s.items) {
 		return 0, errors.New(ErrOutOfRange)
 	}
