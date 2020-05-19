@@ -6,12 +6,13 @@ const (
 )
 
 type Option struct {
-	AllowDuplicate bool
-	StackType      uint8
+	AllowDuplicate bool  // 允许栈中有重复元素
+	StackType      uint8 // 栈的类型
 }
 
+// 栈的类型
 const (
-	NormalStack = iota
-	ASCStack
-	DESCStack
+	NormalStack = iota // 普通栈
+	ASCStack           // 单调递增栈
+	DESCStack          // 单调递减栈
 )

@@ -5,7 +5,6 @@ import (
 	"errors"
 )
 
-// 单调递增栈
 type uint64Stack struct {
 	items []uint64
 
