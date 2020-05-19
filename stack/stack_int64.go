@@ -129,11 +129,6 @@ func (s *int64Stack) Len() int {
 	return len(s.items)
 }
 
-// 返回所有 element 到 slice
-func (s *int64Stack) Elements() []int64 {
-	return s.items
-}
-
 // 后进先出，返回栈顶元素
 func (s *int64Stack) Pop() (int64, error) {
 	if len(s.items) == 0 {

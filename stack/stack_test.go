@@ -13,7 +13,7 @@ func TestNormalInt64Stack(t *testing.T) {
 		normalStack.Push(v)
 	}
 
-	t.Log(normalStack.Elements())
+	t.Log(normalStack.elements())
 
 	normalStack2 := NewInt64Stack(&Option{
 		AllowDuplicate: false,
@@ -23,7 +23,7 @@ func TestNormalInt64Stack(t *testing.T) {
 		normalStack2.Push(v)
 	}
 
-	t.Log(normalStack2.Elements())
+	t.Log(normalStack2.elements())
 }
 
 func TestASCInt64Stack(t *testing.T) {
@@ -36,7 +36,7 @@ func TestASCInt64Stack(t *testing.T) {
 		ascStack.Push(v)
 	}
 
-	t.Log(ascStack.Elements())
+	t.Log(ascStack.elements())
 
 	ascStack2 := NewInt64Stack(&Option{
 		AllowDuplicate: false,
@@ -47,7 +47,7 @@ func TestASCInt64Stack(t *testing.T) {
 		ascStack2.Push(v)
 	}
 
-	t.Log(ascStack2.Elements())
+	t.Log(ascStack2.elements())
 }
 
 func TestDESCInt64Stack(t *testing.T) {
@@ -59,7 +59,7 @@ func TestDESCInt64Stack(t *testing.T) {
 		descStack.Push(v)
 	}
 
-	t.Log(descStack.Elements())
+	t.Log(descStack.elements())
 
 	descStack2 := NewInt64Stack(&Option{
 		AllowDuplicate: false,
@@ -69,7 +69,7 @@ func TestDESCInt64Stack(t *testing.T) {
 		descStack2.Push(v)
 	}
 
-	t.Log(descStack2.Elements())
+	t.Log(descStack2.elements())
 }
 
 // ASC stack
