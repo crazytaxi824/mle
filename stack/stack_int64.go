@@ -1,4 +1,4 @@
-// 单调递增栈
+// 普通栈，单调递增栈，单调递减栈
 package stack
 
 import (
@@ -188,7 +188,7 @@ func (s *int64Stack) Range(fn func(element int64) bool) {
 	}
 }
 
-// return elements by index
+// return elements by index, start from 0
 func (s *int64Stack) Index(index int) (int64, error) {
 	if index >= len(s.items) {
 		return 0, errors.New(ErrOutOfRange)
