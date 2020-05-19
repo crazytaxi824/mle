@@ -29,7 +29,7 @@ func (s *uint32HashSet) Pop() (uint32, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return 0, errors.New("empty set")
+	return 0, errors.New(ErrEmptySet)
 }
 
 // Delete element

@@ -29,7 +29,7 @@ func (s *stringHashSet) Pop() (string, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return "", errors.New("empty set")
+	return "", errors.New(ErrEmptySet)
 }
 
 // Delete element

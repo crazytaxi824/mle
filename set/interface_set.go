@@ -29,7 +29,7 @@ func (s *interfaceHashSet) Pop() (interface{}, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return nil, errors.New("empty set")
+	return nil, errors.New(ErrEmptySet)
 }
 
 // Delete element
