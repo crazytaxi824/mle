@@ -129,6 +129,10 @@ func TestInt64ASCStack_Search(t *testing.T) {
 	if s.Search(7) != 1 {
 		t.Fail()
 	}
+
+	if s.Search(2) != s.searchASCDichotomy(2) {
+		t.Fail()
+	}
 }
 
 func TestInt64ASCStack_IsEmpty(t *testing.T) {
@@ -222,6 +226,35 @@ func TestInt64DESCStack_Search(t *testing.T) {
 	if s.Search(1) != 1 {
 		t.Fail()
 	}
+
+	if s.Search(4) != s.searchDESCDichotomy(4) {
+		t.Fail()
+	}
+}
+
+func TestInt64Stack_Search2(t *testing.T) {
+	e := []int64{5, 4, 3, 3, 3}
+
+	s := NewInt64Stack(&Option{
+		AllowDuplicate: true,
+		StackType:      DESCStack,
+	})
+
+	for _, v := range e {
+		s.Push(v)
+	}
+
+	if s.Search(1) != -1 {
+		t.Fail()
+	}
+
+	if s.Search(3) != 1 {
+		t.Fail()
+	}
+
+	if s.Search(4) != 4 {
+		t.Fail()
+	}
 }
 
 func TestInt64DESCStack_IsEmpty(t *testing.T) {
@@ -255,4 +288,37 @@ func TestInt64DESCStack_Range(t *testing.T) {
 		count--
 		return true
 	})
+}
+
+// bench
+func BenchmarkASCSearch(b *testing.B) {
+	ascStack := NewInt64Stack(&Option{
+		AllowDuplicate: false,
+		StackType:      ASCStack,
+	})
+
+	for i := 0; i < 1000; i++ {
+		ascStack.Push(int64(i))
+	}
+
+	for i := 0; i < b.N; i++ {
+		ascStack.searchASCDichotomy(501)
+	}
+	b.ReportAllocs()
+}
+
+func BenchmarkNormalSearch(b *testing.B) {
+	ascStack := NewInt64Stack(&Option{
+		AllowDuplicate: false,
+		StackType:      ASCStack,
+	})
+
+	for i := 0; i < 1000; i++ {
+		ascStack.Push(int64(i))
+	}
+
+	for i := 0; i < b.N; i++ {
+		ascStack.searchNormalStack(501)
+	}
+	b.ReportAllocs()
 }
