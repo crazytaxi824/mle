@@ -233,7 +233,7 @@ func TestInt64DESCStack_Search(t *testing.T) {
 }
 
 func TestInt64Stack_Search2(t *testing.T) {
-	e := []int64{5, 4, 3, 3, 3}
+	e := []int64{8, 6, 5, 5, 4, 3, 3, 3, 2}
 
 	s := NewInt64Stack(&Option{
 		AllowDuplicate: true,
@@ -248,11 +248,19 @@ func TestInt64Stack_Search2(t *testing.T) {
 		t.Fail()
 	}
 
-	if s.Search(3) != 1 {
+	if s.Search(3) != 2 {
 		t.Fail()
 	}
 
-	if s.Search(4) != 4 {
+	if s.Search(2) != 1 {
+		t.Fail()
+	}
+
+	if s.Search(4) != 5 {
+		t.Fail()
+	}
+
+	if s.Search(5) != 6 {
 		t.Fail()
 	}
 }

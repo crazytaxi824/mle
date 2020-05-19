@@ -129,6 +129,11 @@ func (s *int64Stack) Len() int {
 	return len(s.items)
 }
 
+// this is for test only
+func (s *int64Stack) elements() []int64 {
+	return s.items
+}
+
 // 后进先出，返回栈顶元素
 func (s *int64Stack) Pop() (int64, error) {
 	if len(s.items) == 0 {
@@ -182,10 +187,10 @@ func (s *int64Stack) searchASCDichotomy(n int64) int {
 		switch {
 		case s.items[index] == n:
 			// 找到之后遍历相同元素，allow duplicated element
-			for ; s.items[index] == n && index < lenS; index++ {
-				return lenS - index
+			for index < lenS && s.items[index] == n {
+				index++
 			}
-			return 1
+			return lenS - index + 1
 		case s.items[index] > n:
 			end = index
 		case s.items[index] < n:
@@ -204,10 +209,10 @@ func (s *int64Stack) searchDESCDichotomy(n int64) int {
 		switch {
 		case s.items[index] == n:
 			// 找到之后遍历相同元素，allow duplicated element
-			for ; s.items[index] == n && index < lenS; index++ {
-				return lenS - index
+			for index < lenS && s.items[index] == n {
+				index++
 			}
-			return 1
+			return lenS - index + 1
 		case s.items[index] < n:
 			end = index
 		case s.items[index] > n:
