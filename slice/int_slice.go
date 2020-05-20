@@ -63,38 +63,39 @@ func (it intType) ContainsAny(a, sub []int) bool {
 	return false
 }
 
-// insert element in the certain index
-func (intType) Insert(s []int, element int, index int) []int {
+// insert element in the certain index, do not affect the original slice
+func (intType) Insert(s []int, element, index int) []int {
 	if index < 0 {
 		index = 0
 	}
 
 	lenS := len(s)
 	if index >= lenS {
-		s = append(s, element)
-		return s
+		return append(s, element)
 	}
 
-	result := s[:index:index]
+	result := make([]int, index, lenS+1)
+	copy(result, s)
 	result = append(result, element)
 	result = append(result, s[index:]...)
 
 	return result
 }
 
-// delete by index
+// delete by index, do not affect the original slice
 func (intType) DeleteByIndex(s []int, index int) []int {
 	if index < 0 || index > len(s)-1 {
 		return s
 	}
 
-	result := s[:index:index]
+	result := make([]int, index, len(s)-1)
+	copy(result, s)
 	result = append(result, s[index+1:]...)
 	return result
 }
 
-// n <= 0 delete all element
-func (it intType) DeleteN(s []int, element int, n int) []int {
+// n <= 0 delete all element, do not affect the original slice
+func (it intType) DeleteN(s []int, element, n int) []int {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)
 		if index < 0 {

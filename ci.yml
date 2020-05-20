@@ -344,6 +344,8 @@ issues:
         - gomnd
         - goconst
         - funlen
+        - ineffassign
+        - staticcheck
 
     - path: internal/hmac/
       text: "weak cryptographic primitive"

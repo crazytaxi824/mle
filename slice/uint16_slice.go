@@ -63,7 +63,7 @@ func (it uint16Type) ContainsAny(a, sub []uint16) bool {
 	return false
 }
 
-// insert element in the certain index
+// insert element in the certain index, do not affect the original slice
 func (uint16Type) Insert(s []uint16, element uint16, index int) []uint16 {
 	if index < 0 {
 		index = 0
@@ -71,29 +71,30 @@ func (uint16Type) Insert(s []uint16, element uint16, index int) []uint16 {
 
 	lenS := len(s)
 	if index >= lenS {
-		s = append(s, element)
-		return s
+		return append(s, element)
 	}
 
-	result := s[:index:index]
+	result := make([]uint16, index, lenS+1)
+	copy(result, s)
 	result = append(result, element)
 	result = append(result, s[index:]...)
 
 	return result
 }
 
-// delete by index
+// delete by index, do not affect the original slice
 func (uint16Type) DeleteByIndex(s []uint16, index int) []uint16 {
 	if index < 0 || index > len(s)-1 {
 		return s
 	}
 
-	result := s[:index:index]
+	result := make([]uint16, index, len(s)-1)
+	copy(result, s)
 	result = append(result, s[index+1:]...)
 	return result
 }
 
-// n <= 0 delete all element
+// n <= 0 delete all element, do not affect the original slice
 func (it uint16Type) DeleteN(s []uint16, element uint16, n int) []uint16 {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)

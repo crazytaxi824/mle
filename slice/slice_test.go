@@ -23,9 +23,9 @@ func TestSlice(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	t.Log(Int64().Insert(myNum, 100, 0))
-	t.Log(Int64().Insert(myNum, 100, 100))
-	t.Log(Int64().Insert(myNum, 100, 3))
+	t.Log(Int64().Insert(myNum, 100, 0), myNum)
+	t.Log(Int64().Insert(myNum, 100, 100), myNum)
+	t.Log(Int64().Insert(myNum, 100, 3), myNum)
 }
 
 func TestDelete(t *testing.T) {
