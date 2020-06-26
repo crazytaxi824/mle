@@ -2,6 +2,7 @@
 package conv
 
 import (
+	"reflect"
 	"unsafe"
 )
 
@@ -12,7 +13,12 @@ func BytesToStr(b []byte) string {
 
 // StrToByte 字符串转[]byte
 func StrToByte(s string) []byte {
-	x := (*[2]uintptr)(unsafe.Pointer(&s)) // #nosec
-	h := [3]uintptr{x[0], x[1], x[1]}
+	x := (*reflect.StringHeader)(unsafe.Pointer(&s)) // #nosec
+
+	var h reflect.SliceHeader
+	h.Data = x.Data
+	h.Len = x.Len
+	h.Cap = x.Len
+
 	return *(*[]byte)(unsafe.Pointer(&h)) // #nosec
 }
