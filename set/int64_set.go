@@ -68,6 +68,7 @@ func (s *int64HashSet) Contains(n int64) bool {
 	return ok
 }
 
+// Contains all elements
 func (s *int64HashSet) ContainsN(n []int64) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {

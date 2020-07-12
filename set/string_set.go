@@ -68,6 +68,7 @@ func (s *stringHashSet) Contains(n string) bool {
 	return ok
 }
 
+// Contains all elements
 func (s *stringHashSet) ContainsN(n []string) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {

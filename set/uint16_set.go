@@ -68,6 +68,7 @@ func (s *uint16HashSet) Contains(n uint16) bool {
 	return ok
 }
 
+// Contains all elements
 func (s *uint16HashSet) ContainsN(n []uint16) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {
