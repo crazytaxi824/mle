@@ -68,6 +68,7 @@ func (s *runeHashSet) Contains(n rune) bool {
 	return ok
 }
 
+// Contains all elements
 func (s *runeHashSet) ContainsN(n []rune) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {

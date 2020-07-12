@@ -68,6 +68,7 @@ func (s *uint32HashSet) Contains(n uint32) bool {
 	return ok
 }
 
+// Contains all elements
 func (s *uint32HashSet) ContainsN(n []uint32) bool {
 	for _, v := range n {
 		if _, ok := s.elements[v]; !ok {

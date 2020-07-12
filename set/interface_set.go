@@ -68,7 +68,7 @@ func (s *interfaceHashSet) Contains(element interface{}) bool {
 	return ok
 }
 
-// Contains all of the elements
+// Contains all elements
 func (s *interfaceHashSet) ContainsN(elements []interface{}) bool {
 	for _, v := range elements {
 		if _, ok := s.elements[v]; !ok {

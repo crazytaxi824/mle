@@ -63,7 +63,7 @@ func (it stringType) ContainsAny(a, sub []string) bool {
 	return false
 }
 
-// insert element in the certain index, do not affect the original slice
+// insert element in the certain index, return a new slice, do not affect the original slice
 func (stringType) Insert(s []string, element string, index int) []string {
 	if index < 0 {
 		index = 0
@@ -71,7 +71,7 @@ func (stringType) Insert(s []string, element string, index int) []string {
 
 	lenS := len(s)
 	if index >= lenS {
-		return append(s, element)
+		index = lenS
 	}
 
 	result := make([]string, index, lenS+1)
@@ -82,7 +82,7 @@ func (stringType) Insert(s []string, element string, index int) []string {
 	return result
 }
 
-// delete by index, do not affect the original slice
+// delete by index, return a new slice, do not affect the original slice
 func (stringType) DeleteByIndex(s []string, index int) []string {
 	if index < 0 || index > len(s)-1 {
 		return s
@@ -94,7 +94,7 @@ func (stringType) DeleteByIndex(s []string, index int) []string {
 	return result
 }
 
-// n <= 0 delete all element, do not affect the original slice
+// n <= 0 delete all element, return a new slice, do not affect the original slice
 func (it stringType) DeleteN(s []string, element string, n int) []string {
 	for i := 0; n <= 0 || i < n; i++ {
 		index := it.IndexOf(s, element)
