@@ -12,13 +12,15 @@ const (
 	uint16Len = 1 << 1
 	uint32Len = 1 << 2
 	uint64Len = 1 << 3
+
+	ErrWrongLength = "length of bytes must greater then 0 < len(bytes) <=8"
 )
 
 // BytesToInt byte -> int
 func BytesToInt(b []byte) (UintValue, error) {
 	l := len(b)
 	if l <= 0 {
-		return 0, errors.New("length of bytes must greater then 0 < len(bytes) <=8")
+		return 0, errors.New(ErrWrongLength)
 	}
 
 	switch {
@@ -34,12 +36,9 @@ func BytesToInt(b []byte) (UintValue, error) {
 	case l < uint32Len:
 		// 给 bytes 补到4位
 		tmp := make([]byte, uint32Len)
-		for i, dif := 0, uint32Len-l; i < uint32Len; i++ {
-			if i < dif {
-				continue
-			}
-
-			tmp[i] = b[i-dif]
+		dif := uint32Len - l
+		for i := 0; i < l; i++ {
+			tmp[i+dif] = b[i]
 		}
 		return UintValue(binary.BigEndian.Uint32(tmp)), nil
 
@@ -49,12 +48,9 @@ func BytesToInt(b []byte) (UintValue, error) {
 	case l < uint64Len:
 		// 给 bytes 补到8位
 		tmp := make([]byte, uint64Len)
-		for i, dif := 0, uint64Len-l; i < uint64Len; i++ {
-			if i < dif {
-				continue
-			}
-
-			tmp[i] = b[i-dif]
+		dif := uint64Len - l
+		for i := 0; i < l; i++ {
+			tmp[i+dif] = b[i]
 		}
 		return UintValue(binary.BigEndian.Uint64(tmp)), nil
 
@@ -62,7 +58,7 @@ func BytesToInt(b []byte) (UintValue, error) {
 		return UintValue(binary.BigEndian.Uint64(b)), nil
 	}
 
-	return 0, errors.New("length of bytes must greater then 0 < len(bytes) <=8")
+	return 0, errors.New(ErrWrongLength)
 }
 
 func (v UintValue) String() string {
