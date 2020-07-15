@@ -1,10 +1,6 @@
 // 普通栈，单调递增栈，单调递减栈
 package stack
 
-import (
-	"errors"
-)
-
 type int16Stack struct {
 	items []int16
 
@@ -125,7 +121,7 @@ func (s *int16Stack) elements() []int16 {
 // 后进先出，返回栈顶元素
 func (s *int16Stack) Pop() (int16, error) {
 	if len(s.items) == 0 {
-		return 0, errors.New(ErrEmptyStack)
+		return 0, ErrEmptyStack
 	}
 
 	res := s.items[len(s.items)-1]
@@ -136,7 +132,7 @@ func (s *int16Stack) Pop() (int16, error) {
 // 返回栈顶元素，但是不删除该元素
 func (s *int16Stack) Peek() (int16, error) {
 	if len(s.items) == 0 {
-		return 0, errors.New(ErrEmptyStack)
+		return 0, ErrEmptyStack
 	}
 
 	return s.items[len(s.items)-1], nil
@@ -234,7 +230,7 @@ func (s *int16Stack) Range(fn func(element int16) bool) {
 // return elements by index, start from 0
 func (s *int16Stack) Index(index int) (int16, error) {
 	if index >= len(s.items) {
-		return 0, errors.New(ErrOutOfRange)
+		return 0, ErrOutOfRange
 	}
 	return s.items[index], nil
 }

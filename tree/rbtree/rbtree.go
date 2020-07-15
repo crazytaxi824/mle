@@ -4,10 +4,12 @@ import (
 	"errors"
 )
 
-const (
-	ErrNodeExist    = "the node is already exist"
-	ErrNodeNotExist = "the node is not in the tree"
+var (
+	ErrNodeExist    = errors.New("the node is already exist")
+	ErrNodeNotExist = errors.New("the node is not in the tree")
+)
 
+const (
 	RED   = true
 	BLACK = false
 )
@@ -78,7 +80,7 @@ func (t *rbTree) whoseChild(order int) (*node, bool, error) {
 
 	for loop := t.root; loop != nil; {
 		if order == loop.order {
-			return nil, false, errors.New(ErrNodeExist)
+			return nil, false, ErrNodeExist
 		}
 
 		if order < loop.order { // left
@@ -156,7 +158,7 @@ func (t *rbTree) DeleteFromOrder(order int) error {
 	// find the node needs to be deleted
 	delNode := t.Find(order)
 	if delNode == nil {
-		return errors.New(ErrNodeNotExist)
+		return ErrNodeNotExist
 	}
 
 	// deletion cases

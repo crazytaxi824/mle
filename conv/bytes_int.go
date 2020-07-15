@@ -12,15 +12,18 @@ const (
 	uint16Len = 1 << 1
 	uint32Len = 1 << 2
 	uint64Len = 1 << 3
+)
 
-	ErrWrongLength = "length of bytes must greater then 0 < len(bytes) <=8"
+var (
+	ErrWrongLength = errors.New("length of bytes must greater then 0 < len(bytes) <=8")
+	ErrOverFlow = errors.New("value overflows")
 )
 
 // BytesToInt byte -> int
 func BytesToInt(b []byte) (UintValue, error) {
 	l := len(b)
 	if l <= 0 {
-		return 0, errors.New(ErrWrongLength)
+		return 0, ErrWrongLength
 	}
 
 	switch {
@@ -58,7 +61,7 @@ func BytesToInt(b []byte) (UintValue, error) {
 		return UintValue(binary.BigEndian.Uint64(b)), nil
 	}
 
-	return 0, errors.New(ErrWrongLength)
+	return 0, ErrWrongLength
 }
 
 func (v UintValue) String() string {
@@ -67,35 +70,35 @@ func (v UintValue) String() string {
 
 func (v UintValue) Int() (int, error) {
 	if v >= 1<<63 {
-		return 0, errors.New("value overflows int64")
+		return 0, ErrOverFlow
 	}
 	return int(v), nil
 }
 
 func (v UintValue) Int64() (int64, error) {
 	if v >= 1<<63 {
-		return 0, errors.New("value overflows int64")
+		return 0, ErrOverFlow
 	}
 	return int64(v), nil
 }
 
 func (v UintValue) Int32() (int32, error) {
 	if v >= 1<<31 {
-		return 0, errors.New("value overflows int32")
+		return 0, ErrOverFlow
 	}
 	return int32(v), nil
 }
 
 func (v UintValue) Int16() (int16, error) {
 	if v >= 1<<15 {
-		return 0, errors.New("value overflows int16")
+		return 0, ErrOverFlow
 	}
 	return int16(v), nil
 }
 
 func (v UintValue) Int8() (int8, error) {
 	if v >= 1<<7 {
-		return 0, errors.New("value overflows int8")
+		return 0, ErrOverFlow
 	}
 	return int8(v), nil
 }
@@ -106,21 +109,21 @@ func (v UintValue) Uint64() (uint64, error) {
 
 func (v UintValue) Uint32() (uint32, error) {
 	if v >= 1<<32 {
-		return 0, errors.New("value overflows uint32")
+		return 0, ErrOverFlow
 	}
 	return uint32(v), nil
 }
 
 func (v UintValue) Uint16() (uint16, error) {
 	if v >= 1<<16 {
-		return 0, errors.New("value overflows uint16")
+		return 0, ErrOverFlow
 	}
 	return uint16(v), nil
 }
 
 func (v UintValue) Uint8() (uint8, error) {
 	if v >= 1<<8 {
-		return 0, errors.New("value overflows uint8")
+		return 0, ErrOverFlow
 	}
 	return uint8(v), nil
 }

@@ -1,5 +1,7 @@
 package set
 
-const (
-	ErrEmptySet = "empty set"
+import (
+	"errors"
 )
+
+var ErrEmptySet = errors.New("empty set")

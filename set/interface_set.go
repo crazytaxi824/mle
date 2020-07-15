@@ -1,10 +1,6 @@
 // Package set is not thread-safe
 package set
 
-import (
-	"errors"
-)
-
 type interfaceHashSet struct {
 	elements map[interface{}]struct{}
 }
@@ -29,7 +25,7 @@ func (s *interfaceHashSet) Pop() (interface{}, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return nil, errors.New(ErrEmptySet)
+	return nil, ErrEmptySet
 }
 
 // Delete element

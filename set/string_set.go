@@ -1,10 +1,6 @@
 // Package set is not thread-safe
 package set
 
-import (
-	"errors"
-)
-
 type stringHashSet struct {
 	elements map[string]struct{}
 }
@@ -29,7 +25,7 @@ func (s *stringHashSet) Pop() (string, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return "", errors.New(ErrEmptySet)
+	return "", ErrEmptySet
 }
 
 // Delete element

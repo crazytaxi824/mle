@@ -1,10 +1,6 @@
 // Package set is not thread-safe
 package set
 
-import (
-	"errors"
-)
-
 type int16HashSet struct {
 	elements map[int16]struct{}
 }
@@ -29,7 +25,7 @@ func (s *int16HashSet) Pop() (int16, error) {
 		delete(s.elements, k)
 		return k, nil
 	}
-	return 0, errors.New(ErrEmptySet)
+	return 0, ErrEmptySet
 }
 
 // Delete element

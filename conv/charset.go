@@ -7,10 +7,12 @@ import (
 	"unicode/utf8"
 )
 
+var ErrNotEven = errors.New("length of []byte must be an even number")
+
 // UTF16toUTF8 字符转换
 func UTF16toUTF8(b []byte) ([]byte, error) {
 	if len(b)%2 != 0 {
-		return nil, errors.New("length of []byte must be an even number")
+		return nil, ErrNotEven
 	}
 
 	u16s := make([]uint16, 1)

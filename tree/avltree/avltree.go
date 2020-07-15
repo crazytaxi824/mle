@@ -4,9 +4,9 @@ import (
 	"errors"
 )
 
-const (
-	ErrNodeExist    = "the node is already exist"
-	ErrNodeNotExist = "the node is not in the tree"
+var (
+	ErrNodeExist    = errors.New("the node is already exist")
+	ErrNodeNotExist = errors.New("the node is not in the tree")
 )
 
 type node struct {
@@ -68,7 +68,7 @@ func (avl *avlTree) whoseChild(order int) (*node, bool, error) {
 
 	for loop := avl.root; loop != nil; {
 		if order == loop.order {
-			return nil, false, errors.New(ErrNodeExist)
+			return nil, false, ErrNodeExist
 		}
 
 		if order < loop.order { // left
@@ -103,7 +103,7 @@ func (avl *avlTree) Find(order int) *node {
 func (avl *avlTree) DeleteFromOrder(order int) error {
 	delNode := avl.Find(order)
 	if delNode == nil {
-		return errors.New(ErrNodeNotExist)
+		return ErrNodeNotExist
 	}
 
 	var parent *node

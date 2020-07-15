@@ -1,8 +1,12 @@
 package stack
 
-const (
-	ErrEmptyStack = "empty stack"
-	ErrOutOfRange = "index is out of range"
+import (
+	"errors"
+)
+
+var (
+	ErrEmptyStack = errors.New("empty stack")
+	ErrOutOfRange = errors.New("index is out of range")
 )
 
 type Option struct {

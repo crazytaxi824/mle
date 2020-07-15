@@ -1,10 +1,6 @@
 // 普通栈，单调递增栈，单调递减栈
 package stack
 
-import (
-	"errors"
-)
-
 type uint64Stack struct {
 	items []uint64
 
@@ -125,7 +121,7 @@ func (s *uint64Stack) elements() []uint64 {
 // 后进先出，返回栈顶元素
 func (s *uint64Stack) Pop() (uint64, error) {
 	if len(s.items) == 0 {
-		return 0, errors.New(ErrEmptyStack)
+		return 0, ErrEmptyStack
 	}
 
 	res := s.items[len(s.items)-1]
@@ -136,7 +132,7 @@ func (s *uint64Stack) Pop() (uint64, error) {
 // 返回栈顶元素，但是不删除该元素
 func (s *uint64Stack) Peek() (uint64, error) {
 	if len(s.items) == 0 {
-		return 0, errors.New(ErrEmptyStack)
+		return 0, ErrEmptyStack
 	}
 
 	return s.items[len(s.items)-1], nil
@@ -234,7 +230,7 @@ func (s *uint64Stack) Range(fn func(element uint64) bool) {
 // return elements by index, start from 0
 func (s *uint64Stack) Index(index int) (uint64, error) {
 	if index >= len(s.items) {
-		return 0, errors.New(ErrOutOfRange)
+		return 0, ErrOutOfRange
 	}
 	return s.items[index], nil
 }
