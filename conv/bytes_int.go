@@ -3,146 +3,160 @@ package conv
 import (
 	"encoding/binary"
 	"errors"
-	"strconv"
 )
 
-type UintValue uint64
-
 const (
-	uint16Len = 1 << 1
-	uint32Len = 1 << 2
-	uint64Len = 1 << 3
+	uint8Len = 1 << iota
+	uint16Len
+	uint32Len
+	uint64Len
 )
 
 var (
-	ErrWrongLength = errors.New("length of bytes must greater then 0 < len(bytes) <=8")
-	ErrOverFlow = errors.New("value overflows")
+	ErrWrongLength1 = errors.New("length of bytes must be 1")
+	ErrWrongLength2 = errors.New("length of bytes must be 2")
+	ErrWrongLength4 = errors.New("length of bytes must be 4")
+	ErrWrongLength8 = errors.New("length of bytes must be 8")
 )
 
-// BytesToInt byte -> int
-func BytesToInt(b []byte) (UintValue, error) {
+// BytesToInt8 byte[1] -> int8
+func BytesToInt8(b []byte) (int8, error) {
 	l := len(b)
-	if l <= 0 {
-		return 0, ErrWrongLength
+	if l != uint8Len {
+		return 0, ErrWrongLength1
 	}
 
-	switch {
-	case l < uint16Len:
-		// 给 bytes 补到2位
-		tmp := make([]byte, uint16Len)
-		tmp[1] = b[0]
-		return UintValue(binary.BigEndian.Uint16(tmp)), nil
+	return int8(b[0]), nil
+}
 
-	case l == uint16Len:
-		return UintValue(binary.BigEndian.Uint16(b)), nil
-
-	case l < uint32Len:
-		// 给 bytes 补到4位
-		tmp := make([]byte, uint32Len)
-		dif := uint32Len - l
-		for i := 0; i < l; i++ {
-			tmp[i+dif] = b[i]
-		}
-		return UintValue(binary.BigEndian.Uint32(tmp)), nil
-
-	case l == uint32Len:
-		return UintValue(binary.BigEndian.Uint32(b)), nil
-
-	case l < uint64Len:
-		// 给 bytes 补到8位
-		tmp := make([]byte, uint64Len)
-		dif := uint64Len - l
-		for i := 0; i < l; i++ {
-			tmp[i+dif] = b[i]
-		}
-		return UintValue(binary.BigEndian.Uint64(tmp)), nil
-
-	case l == uint64Len:
-		return UintValue(binary.BigEndian.Uint64(b)), nil
+func BytesToUint8(b []byte) (uint8, error) {
+	l := len(b)
+	if l != uint8Len {
+		return 0, ErrWrongLength1
 	}
 
-	return 0, ErrWrongLength
+	return b[0], nil
 }
 
-func (v UintValue) String() string {
-	return strconv.FormatUint(uint64(v), 10)
-}
-
-func (v UintValue) Int() (int, error) {
-	if v >= 1<<63 {
-		return 0, ErrOverFlow
+// BytesToInt16 byte[2] -> int16
+func BytesToInt16(b []byte, bigEndian ...bool) (int16, error) {
+	l := len(b)
+	if l != uint16Len {
+		return 0, ErrWrongLength2
 	}
-	return int(v), nil
-}
 
-func (v UintValue) Int64() (int64, error) {
-	if v >= 1<<63 {
-		return 0, ErrOverFlow
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
 	}
-	return int64(v), nil
-}
 
-func (v UintValue) Int32() (int32, error) {
-	if v >= 1<<31 {
-		return 0, ErrOverFlow
+	if !be {
+		// LittleEndian
+		return int16(binary.LittleEndian.Uint16(b)), nil
 	}
-	return int32(v), nil
+
+	// BigEndian
+	return int16(binary.BigEndian.Uint16(b)), nil
 }
 
-func (v UintValue) Int16() (int16, error) {
-	if v >= 1<<15 {
-		return 0, ErrOverFlow
+func BytesToUint16(b []byte, bigEndian ...bool) (uint16, error) {
+	l := len(b)
+	if l != uint16Len {
+		return 0, ErrWrongLength2
 	}
-	return int16(v), nil
-}
 
-func (v UintValue) Int8() (int8, error) {
-	if v >= 1<<7 {
-		return 0, ErrOverFlow
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
 	}
-	return int8(v), nil
-}
 
-func (v UintValue) Uint64() (uint64, error) {
-	return uint64(v), nil
-}
-
-func (v UintValue) Uint32() (uint32, error) {
-	if v >= 1<<32 {
-		return 0, ErrOverFlow
+	if !be {
+		// LittleEndian
+		return binary.LittleEndian.Uint16(b), nil
 	}
-	return uint32(v), nil
+
+	// BigEndian
+	return binary.BigEndian.Uint16(b), nil
 }
 
-func (v UintValue) Uint16() (uint16, error) {
-	if v >= 1<<16 {
-		return 0, ErrOverFlow
+// BytesToInt32 byte[4] -> int32
+func BytesToInt32(b []byte, bigEndian ...bool) (int32, error) {
+	l := len(b)
+	if l != uint32Len {
+		return 0, ErrWrongLength4
 	}
-	return uint16(v), nil
-}
 
-func (v UintValue) Uint8() (uint8, error) {
-	if v >= 1<<8 {
-		return 0, ErrOverFlow
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
 	}
-	return uint8(v), nil
+
+	if !be {
+		// LittleEndian
+		return int32(binary.LittleEndian.Uint32(b)), nil
+	}
+
+	// BigEndian
+	return int32(binary.BigEndian.Uint32(b)), nil
 }
 
-// Uint64ToBytes Uint64 -> Bytes
-func Uint64ToBytes(n uint64) []byte {
-	tmp := make([]byte, 8)
-	binary.BigEndian.PutUint64(tmp, n)
-	return tmp
+func BytesToUint32(b []byte, bigEndian ...bool) (uint32, error) {
+	l := len(b)
+	if l != uint32Len {
+		return 0, ErrWrongLength4
+	}
+
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
+	}
+
+	if !be {
+		// LittleEndian
+		return binary.LittleEndian.Uint32(b), nil
+	}
+
+	// BigEndian
+	return binary.BigEndian.Uint32(b), nil
 }
 
-func Uint32ToBytes(n uint32) []byte {
-	tmp := make([]byte, 4)
-	binary.BigEndian.PutUint32(tmp, n)
-	return tmp
+// BytesToInt64 byte[8] -> int64
+func BytesToInt64(b []byte, bigEndian ...bool) (int64, error) {
+	l := len(b)
+	if l != uint64Len {
+		return 0, ErrWrongLength8
+	}
+
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
+	}
+
+	if !be {
+		// LittleEndian
+		return int64(binary.LittleEndian.Uint64(b)), nil
+	}
+
+	// BigEndian
+	return int64(binary.BigEndian.Uint64(b)), nil
 }
 
-func Uint16ToBytes(n uint16) []byte {
-	tmp := make([]byte, 2)
-	binary.BigEndian.PutUint16(tmp, n)
-	return tmp
+func BytesToUint64(b []byte, bigEndian ...bool) (uint64, error) {
+	l := len(b)
+	if l != uint64Len {
+		return 0, ErrWrongLength8
+	}
+
+	be := true
+	if len(bigEndian) != 0 {
+		be = bigEndian[0]
+	}
+
+	if !be {
+		// LittleEndian
+		return binary.LittleEndian.Uint64(b), nil
+	}
+
+	// BigEndian
+	return binary.BigEndian.Uint64(b), nil
 }
