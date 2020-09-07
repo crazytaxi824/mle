@@ -104,3 +104,12 @@ func (s *intHashSet) Equal(h *intHashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *intHashSet) Copy() *intHashSet {
+	var r = NewIntSet()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}

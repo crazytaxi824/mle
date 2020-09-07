@@ -104,3 +104,12 @@ func (s *int32HashSet) Equal(h *int32HashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *int32HashSet) Copy() *int32HashSet {
+	var r = NewInt32Set()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}

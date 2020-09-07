@@ -104,3 +104,12 @@ func (s *runeHashSet) Equal(h *runeHashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *runeHashSet) Copy() *runeHashSet {
+	var r = NewRuneSet()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}
