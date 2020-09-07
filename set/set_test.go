@@ -8,8 +8,8 @@ import (
 )
 
 func TestHashSetInt16(t *testing.T) {
-	var s = []int16{1, 2, 3, 4, 5}
-	var set = NewInt16Set(s...)
+	var s = []int16{1, 2, 3, 4, 5, 1, 2, 3}
+	var set = NewInt16Set(s...) // 去重
 
 	ast := assert.New(t)
 	ast.Equal(set.Contains(1), true)
@@ -115,4 +115,20 @@ func TestInterfaceHashSet(t *testing.T) {
 	// test pop
 	t.Log(interSet.Pop())
 	ast.Equal(interSet.Len(), 6)
+}
+
+// deep copy
+func TestDeepCopy(t *testing.T) {
+	a := NewInt16Set(1, 2, 3)
+	b := a // shallow copy
+	b.Add(4)
+	if !a.Equal(b) {
+		t.Fail()
+	}
+
+	c := a.Copy() // deep copy
+	c.Add(5)
+	if a.Equal(c) {
+		t.Fail()
+	}
 }

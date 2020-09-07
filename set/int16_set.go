@@ -104,3 +104,12 @@ func (s *int16HashSet) Equal(h *int16HashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *int16HashSet) Copy() *int16HashSet {
+	var r = NewInt16Set()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}
