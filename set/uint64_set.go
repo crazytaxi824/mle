@@ -104,3 +104,12 @@ func (s *uint64HashSet) Equal(h *uint64HashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *uint64HashSet) Copy() *uint64HashSet {
+	var r = NewUint64Set()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}

@@ -104,3 +104,12 @@ func (s *stringHashSet) Equal(h *stringHashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *stringHashSet) Copy() *stringHashSet {
+	var r = NewStringSet()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}

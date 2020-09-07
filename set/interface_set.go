@@ -104,3 +104,12 @@ func (s *interfaceHashSet) Equal(h *interfaceHashSet) bool {
 	})
 	return mark
 }
+
+// Copy, deep copy the elements
+func (s *interfaceHashSet) Copy() *interfaceHashSet {
+	var r = NewInterSet()
+	for k := range s.elements {
+		r.Add(k)
+	}
+	return r
+}
