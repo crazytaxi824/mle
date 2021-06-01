@@ -1,246 +1,292 @@
 package avltree
 
-import (
-	"errors"
-)
+type Tree interface {
+	// return root node, if the tree
+	// is empty, it will return nil.
+	Root() Node
 
-var (
-	ErrNodeExist    = errors.New("the node is already exist")
-	ErrNodeNotExist = errors.New("the node is not in the tree")
-)
+	// return node by index, if index
+	// do not exist, it will return nil.
+	GetNode(index int64) Node
 
-type node struct {
-	parent                *node       // 上级节点
-	leftChild, rightChild *node       // 左右节点
-	depth                 int         // 自己的深度，最下层默认为1
-	value                 interface{} // 内容
-	order                 int         // 排序号码
-	tree                  *avlTree    // 所属树
+	// add a new node by adding index and value.
+	// if index already exists, it will return err.
+	Add(int64, interface{}) error
+
+	// remove node by index, if index
+	// do not exist, it will return err.
+	Remove(index int64) error
+
+	// return tree max depth, if depth == 0
+	// means this is an empty tree.
+	Depth() int
+
+	// return node of smallest index.
+	// If the tree is empty, it will return nil.
+	Smallest() Node
+
+	// return node of largest index.
+	// If the tree is empty, it will return nil.
+	Largest() Node
+
+	// return number of nodes of this tree, if
+	// Size == 0 means this is an empty tree.
+	Size() int
+
+	// return a list of ASC nodes
+	Sort() []Node
 }
 
-type avlTree struct {
+type tree struct {
 	root   *node
 	length int
 }
 
-// duplicate order number is not allowed here
-func NewTree() *avlTree {
-	return &avlTree{}
+func NewTree() Tree {
+	return &tree{}
 }
 
-// add node to the tree
-func (avl *avlTree) Add(order int, value interface{}) error {
-	// 添加第一个节点
-	if avl.root == nil {
-		avl.root = &node{
-			parent:     nil,
-			leftChild:  nil,
-			rightChild: nil,
-			depth:      1,
-			value:      value,
-			order:      order,
-			tree:       avl,
-		}
-		avl.length = 1
+func (t *tree) Root() Node {
+	r := t.root
+	if r == nil {
+		return nil
+	}
+	return r
+}
+
+func (t *tree) GetNode(index int64) Node {
+	node := t.getNode(index)
+	if node == nil {
 		return nil
 	}
 
-	// whose child
-	parent, isLeftChild, err := avl.whoseChild(order)
-	if err != nil {
-		return err
+	return node
+}
+
+func (t *tree) getNode(index int64) *node {
+	loop := t.root
+	if loop == nil {
+		return nil
 	}
 
-	// add node
-	parent.addNewChild(value, order, isLeftChild)
-	avl.length++
-
-	// 计算是否需要 Re-balance
-	avl.checkBalances(parent)
+	for loop != nil {
+		if index == loop.index {
+			return loop
+		} else if index < loop.index { // left side
+			loop = loop.leftChild
+		} else { // right side
+			loop = loop.rightChild
+		}
+	}
 
 	return nil
 }
 
-// true - add to leftChild , false add to rightChild
-func (avl *avlTree) whoseChild(order int) (*node, bool, error) {
-	var result *node
-	var isLeftNode bool
-
-	for loop := avl.root; loop != nil; {
-		if order == loop.order {
-			return nil, false, ErrNodeExist
-		}
-
-		if order < loop.order { // left
-			result = loop
-			loop = loop.leftChild
-			isLeftNode = true
-		} else { // right
-			result = loop
-			loop = loop.rightChild
-			isLeftNode = false
-		}
-	}
-	return result, isLeftNode, nil
-}
-
-// find node from order number, could be nil if the order is not exist
-func (avl *avlTree) Find(order int) *node {
-	var result *node
-
-	for result = avl.root; result != nil && result.order != order; {
-		if order < result.order { // 左边
-			result = result.leftChild
-		} else if order > result.order { // 右边
-			result = result.rightChild
-		}
+func (t *tree) Add(index int64, value interface{}) error {
+	// 先检查 index 是否存在，避免分配内存
+	if t.getNode(index) != nil {
+		return ErrIndexExist
 	}
 
-	return result
+	// 生成一个 node
+	n := &node{
+		value: value,
+		index: index,
+		depth: 1, // 新节点加入，depth 永远是 1.
+		tree:  t,
+	}
+	// DEBUG testing node GC
+	// runtime.SetFinalizer(n, func(p *node) {
+	// 	log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
+	// })
+
+	// 判断位置添加节点
+	t.addNode(n)
+
+	// 长度 +1
+	t.length++
+
+	// re-balance 节点
+	loopCheckDepthAndRebalance(n.parent)
+
+	return nil
 }
 
-// delete node from order number
-func (avl *avlTree) DeleteFromOrder(order int) error {
-	delNode := avl.Find(order)
-	if delNode == nil {
+// 将新的 node 加入 tree
+func (t *tree) addNode(n *node) {
+	// 第一个节点, root
+	if t.root == nil {
+		t.root = n
+		return
+	}
+
+	var tmpParentNode *node // 临时储存 parent node
+	var pos whichChild      // 判断是 leftChild 还是 rightChild
+
+	// 步进方式对比节点
+	for compareNode := t.root; compareNode != nil; {
+		tmpParentNode = compareNode // 储存 parent
+
+		if n.index < compareNode.index { // 向左走
+			pos = isLeftChild
+			compareNode = compareNode.leftChild
+		} else if n.index > compareNode.index { // 向右走
+			pos = isRightChild
+			compareNode = compareNode.rightChild
+		}
+	}
+
+	// 连接两个节点
+	bindingNodes(tmpParentNode, n, pos)
+}
+
+// NOTE BST 中，永远不要删除 internal node，
+// 找到替代的 leaf node 进行替换，然后删除 leaf node。
+func (t *tree) Remove(index int64) error {
+	// 找到 node
+	node := t.getNode(index)
+	if node == nil {
 		return ErrNodeNotExist
 	}
 
-	var parent *node
+	// remove node
+	check := t.removeNode(node)
 
-	switch {
-	case delNode.leftChild == nil && delNode.rightChild == nil: // has both child
-		parent = delNode.parent
+	// 长度 -1
+	t.length--
 
-		if parent == nil { // delNode is root
-			avl.root = nil
-			delNode = nil
-			break
-		}
-
-		if delNode.isLeftChild() {
-			delNode.parent.leftChild = nil
-		} else {
-			delNode.parent.rightChild = nil
-		}
-		delNode = nil
-
-	default:
-		// find replace
-		replaceNode := delNode.predecessorOrSuccessor()
-
-		parent = replaceNode.parent
-
-		// 替换value，order，不替换 depth，left，right child
-		delNode.order = replaceNode.order
-		delNode.value = replaceNode.value
-
-		// 删除 replaceNode
-		if replaceNode.isLeftChild() {
-			parent.leftChild = nil
-		} else {
-			parent.rightChild = nil
-		}
-
-		replaceNode = nil
-	}
-
-	avl.length--
-
-	// 计算是否需要 Re-balance
-	avl.checkBalances(parent)
+	// re-balance
+	loopCheckDepthAndRebalance(check)
 
 	return nil
 }
 
-// delete node
-func (avl *avlTree) Delete(n *node) error {
-	return avl.DeleteFromOrder(n.order)
-}
+// 返回一个 node 用于 check balance.
+func (t *tree) removeNode(n *node) *node {
+	var replacer *node
+	// 根据 left, right child 的 depth 来选取 Predecessor || Successor
+	// leftDepth > rightDepth 则选择 Predecessor
+	// leftDepth < rightDepth 则选择 Successor
+	// NOTE 这种选择方式主要是为了避免多次 rotation。
+	leftDepth, rightDepth := n.childrensDepth()
 
-// total number of nodes in the tree
-func (avl *avlTree) Size() int {
-	return avl.length
-}
-
-// total depth of the tree
-func (avl *avlTree) Depth() int {
-	if avl.root == nil {
-		return 0
-	}
-	return avl.root.depth
-}
-
-// root node of the tree
-func (avl *avlTree) Root() *node {
-	return avl.root
-}
-
-// smallest node in the tree
-func (avl *avlTree) Smallest() *node {
-	var smallest *node
-	for loop := avl.root; loop != nil; loop = loop.leftChild {
-		smallest = loop
-	}
-	return smallest
-}
-
-// biggest node in the tree
-func (avl *avlTree) Biggest() *node {
-	var biggest *node
-	for loop := avl.root; loop != nil; loop = loop.rightChild {
-		biggest = loop
-	}
-	return biggest
-}
-
-// sort the nodes in ASC order
-func (avl *avlTree) Sort() []*node {
-	result := make([]*node, 0, avl.length)
-	smallest := avl.Smallest()
-
-	// s -> small right tree
-	for loop := smallest; loop != nil; {
-		result = append(result, loop)
-		if loop.Successor() != nil { // 先找自己 smallest right
-			loop = loop.Successor()
-		} else { // 再找 parent
-			if loop.parent != nil && loop.order < loop.parent.order { // 在左边
-				loop = loop.parent
-			} else if loop.parent != nil && loop.order >= loop.parent.order {
-				// 如果自己是 right child 继续向上找一直到 left child
-				loop = loop.findLeftParent()
+	// 先判断自己是否是 leaf node
+	if leftDepth == 0 && rightDepth == 0 { // leaf node
+		parent := n.parent
+		if parent != nil {
+			// 删除自己
+			if n.index < parent.index { // left child
+				parent.leftChild = nil
 			} else {
-				break
+				parent.rightChild = nil
 			}
+
+			// need to recheck parent depth and re-balance
+			return parent
 		}
+
+		// 如果没有 parent，leftChild 和 rightChild 说明
+		// n 是 root 节点，而且是唯一节点。
+		t.root = nil
+		return nil
+	} else if leftDepth-rightDepth < 0 {
+		// leftDepth < rightDepth 则选择 Successor
+		replacer = n.successor()
+	} else {
+		// leftDepth >= rightDepth 则选择 Predecessor
+		replacer = n.predecessor()
 	}
 
-	return result
-}
+	// 这里是 replacer != nil 的情况。
+	// leftDepth and rightDepth 其中有一个不是0，replace 不可能是 nil。
 
-// for sort，一直寻找 parent，直到自己是 parent 的 left child，返回 parent，
-// 如果自己是 parent 的 right child，继续向上寻找。
-func (n *node) findLeftParent() *node {
-	for loop := n; ; {
-		if loop.parent == nil {
-			return nil
-		}
-		if loop.order >= loop.parent.order {
-			loop = loop.parent
+	// NOTE 这里顺序不能错，需要先解除关系然后再互换节点信息。
+	// n 本身是 replacer.parent 的情况下，如果先互换节点信息的话，
+	// 后面 index 信息是反的，会导致删除错误的 child。
+
+	// NOTE predecessor/successor 自己可以是 leftChild 也可以是 rightChild.
+	// predecessor/successor 可能会有 leftChild 或者 rightChild，
+	// 如果有 child 需要和自己的 parent 连接。
+	replacerParent := replacer.parent
+	if replacer.index < replacerParent.index { // left child
+		if replacer.leftChild != nil {
+			bindingNodes(replacerParent, replacer.leftChild, isLeftChild)
 		} else {
-			return loop.parent
+			bindingNodes(replacerParent, replacer.rightChild, isLeftChild)
+		}
+	} else { // right child
+		if replacer.leftChild != nil {
+			bindingNodes(replacerParent, replacer.leftChild, isRightChild)
+		} else {
+			bindingNodes(replacerParent, replacer.rightChild, isRightChild)
 		}
 	}
+
+	// 替换 n & replacer 的 index 和 value，不替换 depth, parent, child 等信息。
+	n.replaceNode(replacer)
+
+	// need to recheck replacerParent depth and rebalance
+	return replacerParent
 }
 
-// 检查树中的节点是否平衡
-func (avl *avlTree) checkBalances(_node *node) {
-	loop := _node
-	for loop != nil { // 优化不用一直检测到root
-		// balance factor
-		loop.balanceFactor()
+func (t *tree) Depth() int {
+	return t.root.depth
+}
 
-		loop = loop.updateDepth()
+func (t *tree) Smallest() Node {
+	small := t.smallest()
+	if small == nil {
+		return nil
 	}
+	return small
+}
+
+func (t *tree) smallest() *node {
+	var small *node
+	for loop := t.root; loop != nil; loop = loop.leftChild {
+		small = loop
+	}
+	return small
+}
+
+func (t *tree) Largest() Node {
+	large := t.largest()
+	if large == nil {
+		return nil
+	}
+	return large
+}
+
+func (t *tree) largest() *node {
+	var large *node
+	for loop := t.root; loop != nil; loop = loop.rightChild {
+		large = loop
+	}
+	return large
+}
+
+func (t *tree) Size() int {
+	return t.length
+}
+
+// 先从 Smallest 开始，检查自己有没有 Successor。如果有，move 到 Successor。
+// 如果没有 Successor 则寻找第一个 right side parent，即自己是 parent 的 leftChild。
+// 如果有 first right side parent 则 move 到 first right side parent,
+// 如果 first right side parent 不存在，说明已经到 root 了，结束循环。
+func (t *tree) Sort() []Node {
+	var result []Node
+	loop := t.smallest()
+	for loop != nil {
+		result = append(result, loop)
+
+		// 先判断 Successor
+		if loop.successor() != nil {
+			// 如果 Successor 存在则 move 到 Successor
+			loop = loop.successor()
+		} else {
+			// 如果 Successor 不存在则寻找 first Right parent
+			loop = loop.findFirstRightSideParent()
+		}
+	}
+	return result
 }
