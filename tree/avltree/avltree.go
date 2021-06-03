@@ -41,6 +41,9 @@ type Tree interface {
 
 	// return a list of ASC nodes
 	Sort() []Node
+
+	// clear the whole root
+	Clear()
 }
 
 type tree struct {
@@ -294,4 +297,8 @@ func (t *tree) Sort() []Node {
 		}
 	}
 	return result
+}
+
+func (t *tree) Clear() {
+	t.root = nil
 }
