@@ -30,7 +30,11 @@ func (n *node) Value() interface{} {
 }
 
 // left child -> right child -> right child -> right child...
-// largest Left sub tree, could be nil if predecessor is not exist
+// Predecessor is n's largest Left sub tree.
+// Predecessor could be nil if it is not exist.
+// NOTE Predecessor chould have a leftChild.
+// Predecessor might not be leaf node.
+// Predecessor could be left OR right child of its parent.
 func (n *node) Predecessor() Node {
 	r := n.predecessor()
 	if r == nil {
@@ -48,7 +52,11 @@ func (n *node) predecessor() *node {
 }
 
 // right child -> left child -> left child -> left child...
-// smallest right sub tree, could be nil if successor is not exist
+// Successor is n's smallest right sub tree.
+// Successor could be nil if it is not exist.
+// NOTE Successor chould have a rightChild.
+// Successor might not be leaf node.
+// Successor could be left OR right child of its parent.
 func (n *node) Successor() Node {
 	r := n.successor()
 	if r == nil {

@@ -1,3 +1,9 @@
+/* avltree 要点
+1. avltree 任意节点两边的高度(depth)差不能超过1(可以是1)。如果某个 node 一侧没有 child，
+那么这一侧的高度为0，另一侧的高度最多为 1。如果高度差超过 1 需要进行 rotation 来平衡。
+2. 自身高度 node.depth = max(leftChild.depth, rightChild.depth) + 1。
+*/
+
 package avltree
 
 type Tree interface {
@@ -35,6 +41,9 @@ type Tree interface {
 
 	// return a list of ASC nodes
 	Sort() []Node
+
+	// clear the whole root
+	Clear()
 }
 
 type tree struct {
@@ -107,16 +116,15 @@ func (t *tree) Add(index int64, value interface{}) error {
 	t.length++
 
 	// re-balance 节点
-	loopCheckDepthAndRebalance(n.parent)
+	checkAndReBalance(n.parent)
 
 	return nil
 }
 
 // 将新的 node 加入 tree
 func (t *tree) addNode(n *node) {
-	// 第一个节点, root
-	if t.root == nil {
-		t.root = n
+	if t.root == nil { // 第一个节点, root
+		setRoot(n)
 		return
 	}
 
@@ -156,40 +164,44 @@ func (t *tree) Remove(index int64) error {
 	t.length--
 
 	// re-balance
-	loopCheckDepthAndRebalance(check)
+	checkAndReBalance(check)
 
 	return nil
 }
 
 // 返回一个 node 用于 check balance.
 func (t *tree) removeNode(n *node) *node {
-	var replacer *node
+	leftDepth, rightDepth := n.childrensDepth()
+
+	// 需要删除的 node 是 leaf node 的情况。
+	if leftDepth == 0 && rightDepth == 0 { // leaf node
+		parent := n.parent
+		// 如果没有 parent，leftChild 和 rightChild 说明
+		// n 是 root 节点，而且是唯一节点。
+		if parent == nil {
+			t.root = nil
+			return nil
+		}
+
+		// parent != nil 的情况
+		// 直接删除自己
+		if n == n.parent.leftChild { // left child
+			parent.leftChild = nil
+		} else { // right child
+			parent.rightChild = nil
+		}
+
+		// need to recheck parent depth and re-balance
+		return parent
+	}
+
+	// 需要删除的 node 不是 leaf node 的情况。
 	// 根据 left, right child 的 depth 来选取 Predecessor || Successor
 	// leftDepth > rightDepth 则选择 Predecessor
 	// leftDepth < rightDepth 则选择 Successor
 	// NOTE 这种选择方式主要是为了避免多次 rotation。
-	leftDepth, rightDepth := n.childrensDepth()
-
-	// 先判断自己是否是 leaf node
-	if leftDepth == 0 && rightDepth == 0 { // leaf node
-		parent := n.parent
-		if parent != nil {
-			// 删除自己
-			if n.index < parent.index { // left child
-				parent.leftChild = nil
-			} else {
-				parent.rightChild = nil
-			}
-
-			// need to recheck parent depth and re-balance
-			return parent
-		}
-
-		// 如果没有 parent，leftChild 和 rightChild 说明
-		// n 是 root 节点，而且是唯一节点。
-		t.root = nil
-		return nil
-	} else if leftDepth-rightDepth < 0 {
+	var replacer *node
+	if leftDepth-rightDepth < 0 {
 		// leftDepth < rightDepth 则选择 Successor
 		replacer = n.successor()
 	} else {
@@ -198,17 +210,13 @@ func (t *tree) removeNode(n *node) *node {
 	}
 
 	// 这里是 replacer != nil 的情况。
-	// leftDepth and rightDepth 其中有一个不是0，replace 不可能是 nil。
-
-	// NOTE 这里顺序不能错，需要先解除关系然后再互换节点信息。
-	// n 本身是 replacer.parent 的情况下，如果先互换节点信息的话，
-	// 后面 index 信息是反的，会导致删除错误的 child。
+	// leftDepth and rightDepth 其中有一个不是0，replacer 不可能是 nil。
 
 	// NOTE predecessor/successor 自己可以是 leftChild 也可以是 rightChild.
-	// predecessor/successor 可能会有 leftChild 或者 rightChild，
-	// 如果有 child 需要和自己的 parent 连接。
+	// predecessor 可能会有 leftChild; successor 可能会有 rightChild.
+	// 如果 replacer 有 child 需要和 replacer.parent 连接。
 	replacerParent := replacer.parent
-	if replacer.index < replacerParent.index { // left child
+	if replacer == replacerParent.leftChild { // left child
 		if replacer.leftChild != nil {
 			bindingNodes(replacerParent, replacer.leftChild, isLeftChild)
 		} else {
@@ -289,4 +297,8 @@ func (t *tree) Sort() []Node {
 		}
 	}
 	return result
+}
+
+func (t *tree) Clear() {
+	t.root = nil
 }
