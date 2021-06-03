@@ -16,11 +16,7 @@ func (n *node) rightRightRotation() *node {
 	} else {
 		// n.parent(需要判断left/right) -> n.rightChild
 		// 判断自己(n)是(parent) 的 leftChild 还是 rightChild
-		if n.index < parent.index { // leftChild
-			bindingNodes(parent, rightChild, isLeftChild)
-		} else { // rightChild
-			bindingNodes(parent, rightChild, isRightChild)
-		}
+		bindingNodes(parent, rightChild, n.whichPos())
 	}
 
 	// n.rightChild(leftChild) -> n
@@ -50,11 +46,7 @@ func (n *node) leftLeftRotation() *node {
 	} else {
 		// n.parent(需要判断left/right) -> n.leftChild
 		// 判断自己(n)是(parent) 的 leftChild 还是 rightChild
-		if n.index < parent.index { // leftChild
-			bindingNodes(parent, leftChild, isLeftChild)
-		} else { // rightChild
-			bindingNodes(parent, leftChild, isRightChild)
-		}
+		bindingNodes(parent, leftChild, n.whichPos())
 	}
 
 	// n.leftChild(rightChild) -> n
@@ -89,11 +81,7 @@ func (n *node) leftRightRotation() *node {
 	} else {
 		// n.parent(需要判断left/right) -> n.left.RightChild
 		// 判断自己(n)是(parent) 的 leftChild 还是 rightChild
-		if n.index < parent.index { // leftChild
-			bindingNodes(parent, leftRightChild, isLeftChild)
-		} else { // rightChild
-			bindingNodes(parent, leftRightChild, isRightChild)
-		}
+		bindingNodes(parent, leftRightChild, n.whichPos())
 	}
 
 	// n.left.RightChild(rightChild) -> n
@@ -134,11 +122,7 @@ func (n *node) rightLeftRotation() *node {
 	} else {
 		// n.parent(需要判断left/right) -> n.right.leftChild
 		// 判断自己(n)是(parent) 的 leftChild 还是 rightChild
-		if n.index < parent.index { // leftChild
-			bindingNodes(parent, rightLeftChild, isLeftChild)
-		} else { // rightChild
-			bindingNodes(parent, rightLeftChild, isRightChild)
-		}
+		bindingNodes(parent, rightLeftChild, n.whichPos())
 	}
 
 	// n.right.leftChild(leftChild) -> n
@@ -159,8 +143,8 @@ func (n *node) rightLeftRotation() *node {
 }
 
 // 绑定两个节点关系
-func bindingNodes(parent, child *node, isLeftChild whichChild) {
-	if isLeftChild {
+func bindingNodes(parent, child *node, pos whichChild) {
+	if pos == isLeftChild {
 		parent.leftChild = child
 	} else {
 		parent.rightChild = child

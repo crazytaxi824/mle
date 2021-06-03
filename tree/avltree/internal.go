@@ -1,7 +1,7 @@
 package avltree
 
 // 循环向上(parent)检查 depth 和 balance 信息。
-func loopCheckDepthAndRebalance(n *node) {
+func checkAndReBalance(n *node) {
 	loop := n
 	for loop != nil {
 		// 循环检查直到 root
@@ -11,9 +11,7 @@ func loopCheckDepthAndRebalance(n *node) {
 
 // 重新计算 depth，同时判断是否 balance，如果 unbalance，需要用哪一种 rotation
 func checkNodeDepthAndRebalance(n *node) (next *node) {
-	if n == nil {
-		return nil
-	}
+	// NOTE 这里没考虑出现 nil 的情况。
 
 	// 获取 left, right Child depth
 	leftDep, rightDep := n.childrensDepth()
@@ -68,6 +66,13 @@ func checkNodeDepthAndRebalance(n *node) (next *node) {
 	return n.parent
 }
 
+func (n *node) whichPos() whichChild {
+	if n == n.parent.leftChild {
+		return isLeftChild
+	}
+	return isRightChild
+}
+
 // 返回 left, right child 的 depth
 func (n *node) childrensDepth() (leftDepth, rightDepth int) {
 	if n.leftChild != nil {
@@ -98,7 +103,7 @@ func (n *node) findFirstRightSideParent() *node {
 			return nil
 		}
 
-		if loop.index < loop.parent.index { // left child
+		if loop == loop.parent.leftChild { // left child
 			return loop.parent
 		}
 	}
