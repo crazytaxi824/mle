@@ -1,9 +1,8 @@
-package rbtest
+package example
 
 import (
 	"fmt"
-
-	"github.com/crazytaxi824/mle/tree/rbtree"
+	"local/src/rbtree"
 )
 
 func PrintALL(t rbtree.Tree) {

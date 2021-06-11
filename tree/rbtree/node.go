@@ -10,6 +10,9 @@ type Node interface {
 	Parent() Node       // return parent node, it might be nil, if the node is root.
 	LeftChild() Node    // return left child node, might be nil.
 	RightChild() Node   // return right child node, might be nil.
+
+	// internal use only
+	delete()
 }
 
 type node struct {
@@ -103,4 +106,11 @@ func (n *node) RightChild() Node {
 		return nil
 	}
 	return r
+}
+
+func (n *node) delete() {
+	n.parent = nil
+	n.leftChild = nil
+	n.rightChild = nil
+	n.tree = nil
 }

@@ -6,6 +6,11 @@
 
 package avltree
 
+import (
+	"log"
+	"runtime"
+)
+
 type Tree interface {
 	// return root node, if the tree
 	// is empty, it will return nil.
@@ -13,15 +18,15 @@ type Tree interface {
 
 	// return node by index, if index
 	// do not exist, it will return nil.
-	GetNode(index int64) Node
+	Search(index int64) Node
 
 	// add a new node by adding index and value.
 	// if index already exists, it will return err.
-	Add(int64, interface{}) error
+	Insert(int64, interface{}) error
 
 	// remove node by index, if index
 	// do not exist, it will return err.
-	Remove(index int64) error
+	Delete(index int64) error
 
 	// return tree max depth, if depth == 0
 	// means this is an empty tree.
@@ -42,7 +47,11 @@ type Tree interface {
 	// return a list of ASC nodes
 	Sort() []Node
 
-	// clear the whole root
+	// Clear the whole tree. delete every node in the tree.
+	// NOTE
+	// if just set tree.root = nil, GC may not release memory.
+	// if you want to release memory, you have to Clear() after
+	// using the tree.
 	Clear()
 }
 
@@ -55,6 +64,11 @@ func NewTree() Tree {
 	return &tree{}
 }
 
+// internal use only
+func newTree() *tree {
+	return &tree{}
+}
+
 func (t *tree) Root() Node {
 	r := t.root
 	if r == nil {
@@ -63,8 +77,8 @@ func (t *tree) Root() Node {
 	return r
 }
 
-func (t *tree) GetNode(index int64) Node {
-	node := t.getNode(index)
+func (t *tree) Search(index int64) Node {
+	node := t.search(index)
 	if node == nil {
 		return nil
 	}
@@ -72,7 +86,7 @@ func (t *tree) GetNode(index int64) Node {
 	return node
 }
 
-func (t *tree) getNode(index int64) *node {
+func (t *tree) search(index int64) *node {
 	loop := t.root
 	if loop == nil {
 		return nil
@@ -91,9 +105,9 @@ func (t *tree) getNode(index int64) *node {
 	return nil
 }
 
-func (t *tree) Add(index int64, value interface{}) error {
+func (t *tree) Insert(index int64, value interface{}) error {
 	// 先检查 index 是否存在，避免分配内存
-	if t.getNode(index) != nil {
+	if t.search(index) != nil {
 		return ErrIndexExist
 	}
 
@@ -105,9 +119,9 @@ func (t *tree) Add(index int64, value interface{}) error {
 		tree:  t,
 	}
 	// DEBUG testing node GC
-	// runtime.SetFinalizer(n, func(p *node) {
-	// 	log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
-	// })
+	runtime.SetFinalizer(n, func(p *node) {
+		log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
+	})
 
 	// 判断位置添加节点
 	t.addNode(n)
@@ -150,9 +164,9 @@ func (t *tree) addNode(n *node) {
 
 // NOTE BST 中，永远不要删除 internal node，
 // 找到替代的 leaf node 进行替换，然后删除 leaf node。
-func (t *tree) Remove(index int64) error {
+func (t *tree) Delete(index int64) error {
 	// 找到 node
-	node := t.getNode(index)
+	node := t.search(index)
 	if node == nil {
 		return ErrNodeNotExist
 	}
@@ -179,17 +193,22 @@ func (t *tree) removeNode(n *node) *node {
 		// 如果没有 parent，leftChild 和 rightChild 说明
 		// n 是 root 节点，而且是唯一节点。
 		if parent == nil {
+			// 直接删除
+			n.delete()
 			t.root = nil
 			return nil
 		}
 
 		// parent != nil 的情况
 		// 直接删除自己
-		if n == n.parent.leftChild { // left child
+		if n == parent.leftChild { // left child
 			parent.leftChild = nil
 		} else { // right child
 			parent.rightChild = nil
 		}
+
+		// 直接删除
+		n.delete()
 
 		// need to recheck parent depth and re-balance
 		return parent
@@ -218,8 +237,10 @@ func (t *tree) removeNode(n *node) *node {
 	replacerParent := replacer.parent
 	if replacer == replacerParent.leftChild { // left child
 		if replacer.leftChild != nil {
+			// 自己是 left child，同时有 left child，说明 replacer 是 predecessor
 			bindingNodes(replacerParent, replacer.leftChild, isLeftChild)
 		} else {
+			// 自己是 left child，同时没有 left child，replacer 可能是 predecessor, successor.
 			bindingNodes(replacerParent, replacer.rightChild, isLeftChild)
 		}
 	} else { // right child
@@ -232,6 +253,9 @@ func (t *tree) removeNode(n *node) *node {
 
 	// 替换 n & replacer 的 index 和 value，不替换 depth, parent, child 等信息。
 	n.replaceNode(replacer)
+
+	// 删除 replacer
+	replacer.delete()
 
 	// need to recheck replacerParent depth and rebalance
 	return replacerParent
@@ -299,6 +323,23 @@ func (t *tree) Sort() []Node {
 	return result
 }
 
+// NOTE delete every node in the tree.
 func (t *tree) Clear() {
+	loop := []*node{t.root}
+	for loop != nil {
+		var tmp []*node
+		for _, n := range loop {
+			if n.leftChild != nil {
+				tmp = append(tmp, n.leftChild)
+			}
+			if n.rightChild != nil {
+				tmp = append(tmp, n.rightChild)
+			}
+			n.delete()
+		}
+		loop = tmp
+	}
+
 	t.root = nil
+	t.length = 0
 }

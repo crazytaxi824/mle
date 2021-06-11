@@ -16,8 +16,8 @@ func (t *tree) markNodes(n *node) (doubleBlack *node) {
 	// 不是 leaf node 的情况：
 	// 寻找 successor. (这里也可以选择 predecessor, 下面情况需要镜像处理)
 	// successor 自己可以是 leftChild 或者是 rightChild.
-	// successor 可能会有 1 个 rightChild，而且这个 rightChild 不会有其他 child。
-	// 如果 successor 不存在，那么 n 一定会有一个 leftChild.
+	// successor 可能会有 1 个 rightChild，而且这个 rightChild 不会有其他 child。(平衡原因, 2h>=H)
+	// 如果 successor 不存在，那么 n 一定会有一个 leftChild.(否则自己是 leaf node)
 	successor := n.successor()
 
 	// successor 不存在，那么 n 一定会有一个 leftChild.
@@ -61,11 +61,12 @@ func resolveDoubleBlack(dbNode *node) {
 }
 
 /* NOTE
-1. 如果一个 leaf node 如果是 black，那么他一定会有 sibling,
-否则不满足红黑树的每个分支 black node 数量相同规则。
-2. 不会出现某个 node 有一个 nil child 和 一个 black child 的情况，
+1. 如果一个 leaf node 如果是 black，那么他一定会有 sibling.
+2. 不会出现某个 node 有一个 nil child 和 一个 black child 的情况.
 因为不满足红黑树的每个分支 black node 数量相同规则。
-3. 如果 sibling 是 red，则 parent 和 sibling 的两个 children
+NOTE 但是在 rotation 过程中有可能出现一边是 nil child，一边是 black child
+的情况，因为节点还未被删除，所以判断的时候需要特别注意。
+2. 如果 sibling 是 red，则 parent 和 sibling 的两个 children
 一定是 black(nil), 否则会造成 red red conflict。
 
 db node situation：
@@ -183,6 +184,9 @@ func (t *tree) deleteCachedNode() {
 				t.cacheDelNode.parent.rightChild = nil
 			}
 		}
+
+		// 删除 node 所有关系
+		t.cacheDelNode.delete()
 
 		t.cacheDelNode = nil // 重置为 nil
 	}

@@ -1,9 +1,8 @@
-package avltest
+package example
 
 import (
 	"fmt"
-
-	"github.com/crazytaxi824/mle/tree/avltree"
+	"local/src/avltree"
 )
 
 func PrintTree(t avltree.Tree) {

@@ -1,12 +1,11 @@
-package avltest
+package example
 
 import (
 	"crypto/rand"
+	"local/src/avltree"
 	"math/big"
 	"sort"
 	"testing"
-
-	"github.com/crazytaxi824/mle/tree/avltree"
 )
 
 func Benchmark_AVLTreeAdd(b *testing.B) {
@@ -20,7 +19,7 @@ func Benchmark_AVLTreeAdd(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tree := avltree.NewTree()
 		for _, v := range result {
-			tree.Add(v, nil)
+			tree.Insert(v, nil)
 		}
 	}
 	b.ReportAllocs()
@@ -65,7 +64,7 @@ func Benchmark_TreeRemove(b *testing.B) {
 		rms := make([]int64, 10)
 		for i := 0; i < 10000; i++ {
 			r, _ := rand.Int(rand.Reader, big.NewInt(1000000))
-			tree.Add(r.Int64(), nil)
+			tree.Insert(r.Int64(), nil)
 
 			if i%100 == 0 {
 				rms = append(rms, r.Int64())
@@ -73,7 +72,7 @@ func Benchmark_TreeRemove(b *testing.B) {
 		}
 
 		for _, v := range rms {
-			tree.Remove(v)
+			tree.Delete(v)
 		}
 	}
 	b.ReportAllocs()
@@ -83,12 +82,12 @@ func Benchmark_TreeSearch(b *testing.B) {
 	tree := avltree.NewTree()
 	for i := 0; i < 10000; i++ {
 		r, _ := rand.Int(rand.Reader, big.NewInt(1000000))
-		tree.Add(r.Int64(), nil)
+		tree.Insert(r.Int64(), nil)
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		tree.GetNode(1000)
+		tree.Search(1000)
 	}
 	b.ReportAllocs()
 }
@@ -129,7 +128,7 @@ func Benchmark_TreeSort(b *testing.B) {
 	tree := avltree.NewTree()
 	for i := 0; i < 10000; i++ {
 		r, _ := rand.Int(rand.Reader, big.NewInt(1000000))
-		tree.Add(r.Int64(), nil)
+		tree.Insert(r.Int64(), nil)
 	}
 
 	b.ResetTimer()

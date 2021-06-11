@@ -15,6 +15,11 @@
 
 package rbtree
 
+import (
+	"log"
+	"runtime"
+)
+
 type Tree interface {
 	// return root node, if the tree
 	// is empty, it will return nil.
@@ -22,15 +27,15 @@ type Tree interface {
 
 	// return node by index, if index
 	// do not exist, it will return nil.
-	GetNode(index int64) Node
+	Search(index int64) Node
 
 	// add a new node by adding index and value.
 	// if index already exists, it will return err.
-	Add(int64, interface{}) error
+	Insert(int64, interface{}) error
 
 	// remove node by index, if index
 	// do not exist, it will return err.
-	Remove(index int64) error
+	Delete(index int64) error
 
 	// return node of smallest index.
 	// If the tree is empty, it will return nil.
@@ -47,7 +52,11 @@ type Tree interface {
 	// return a list of ASC nodes
 	Sort() []Node
 
-	// clear the whole root
+	// Clear the whole tree. delete every node in the tree.
+	// NOTE
+	// if just set tree.root = nil, GC may not release memory.
+	// if you want to release memory, you have to Clear() after
+	// using the tree.
 	Clear()
 }
 
@@ -61,6 +70,11 @@ func NewTree() Tree {
 	return &tree{}
 }
 
+// internal use only
+func newTree() *tree {
+	return &tree{}
+}
+
 func (t *tree) Root() Node {
 	r := t.root
 	if r == nil {
@@ -69,8 +83,8 @@ func (t *tree) Root() Node {
 	return r
 }
 
-func (t *tree) GetNode(index int64) Node {
-	node := t.getNode(index)
+func (t *tree) Search(index int64) Node {
+	node := t.search(index)
 	if node == nil {
 		return nil
 	}
@@ -78,7 +92,7 @@ func (t *tree) GetNode(index int64) Node {
 	return node
 }
 
-func (t *tree) getNode(index int64) *node {
+func (t *tree) search(index int64) *node {
 	loop := t.root
 	if loop == nil {
 		return nil
@@ -97,9 +111,9 @@ func (t *tree) getNode(index int64) *node {
 	return nil
 }
 
-func (t *tree) Add(index int64, value interface{}) error {
+func (t *tree) Insert(index int64, value interface{}) error {
 	// 先检查 index 是否存在，避免分配内存
-	if t.getNode(index) != nil {
+	if t.search(index) != nil {
 		return ErrIndexExist
 	}
 
@@ -110,9 +124,9 @@ func (t *tree) Add(index int64, value interface{}) error {
 		tree: t,
 	}
 	// DEBUG testing node GC
-	// runtime.SetFinalizer(n, func(p *node) {
-	// 	log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
-	// })
+	runtime.SetFinalizer(n, func(p *node) {
+		log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
+	})
 
 	// 判断位置添加节点
 	t.addNode(n)
@@ -125,9 +139,9 @@ func (t *tree) Add(index int64, value interface{}) error {
 	return nil
 }
 
-func (t *tree) Remove(index int64) error {
+func (t *tree) Delete(index int64) error {
 	// 找到 node
-	node := t.getNode(index)
+	node := t.search(index)
 	if node == nil {
 		return ErrNodeNotExist
 	}
@@ -205,6 +219,24 @@ func (t *tree) Sort() []Node {
 	return result
 }
 
+// NOTE delete every node in the tree.
 func (t *tree) Clear() {
+	loop := []*node{t.root}
+	for loop != nil {
+		var tmp []*node
+		for _, n := range loop {
+			if n.leftChild != nil {
+				tmp = append(tmp, n.leftChild)
+			}
+			if n.rightChild != nil {
+				tmp = append(tmp, n.rightChild)
+			}
+			n.delete()
+		}
+		loop = tmp
+	}
+
 	t.root = nil
+	t.length = 0
+	t.cacheDelNode = nil
 }
