@@ -21,8 +21,6 @@ package bptree
 
 import (
 	"errors"
-	"log"
-	"runtime"
 )
 
 type Tree interface {
@@ -107,9 +105,9 @@ func (t *tree) newLeaf() *leafNode {
 		},
 		data: make([]KV, 0, t.maxKey),
 	}
-	runtime.SetFinalizer(ln, func(p *leafNode) {
-		log.Println(p.Type(), "GC ~~~~~~~~~~~~~~~~")
-	})
+	// runtime.SetFinalizer(ln, func(p *leafNode) {
+	// 	log.Println(p.Type(), "GC ~~~~~~~~~~~~~~~~")
+	// })
 	return ln
 }
 
@@ -122,9 +120,9 @@ func (t *tree) newInternal() *internalNode {
 		keys:     make([]int64, 0, t.maxKey),
 		children: make([]iNode, 0, t.maxKey+1),
 	}
-	runtime.SetFinalizer(in, func(p *internalNode) {
-		log.Println(p.Type(), "GC ~~~~~~~~~~~~~~~~")
-	})
+	// runtime.SetFinalizer(in, func(p *internalNode) {
+	// 	log.Println(p.Type(), "GC ~~~~~~~~~~~~~~~~")
+	// })
 	return in
 }
 

@@ -6,11 +6,6 @@
 
 package avltree
 
-import (
-	"log"
-	"runtime"
-)
-
 type Tree interface {
 	// return root node, if the tree
 	// is empty, it will return nil.
@@ -119,9 +114,9 @@ func (t *tree) Insert(index int64, value interface{}) error {
 		tree:  t,
 	}
 	// DEBUG testing node GC
-	runtime.SetFinalizer(n, func(p *node) {
-		log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
-	})
+	// runtime.SetFinalizer(n, func(p *node) {
+	// 	log.Println(p.index, " is GC~~~~~~~~~~~~~~~~~~~~~")
+	// })
 
 	// 判断位置添加节点
 	t.addNode(n)
