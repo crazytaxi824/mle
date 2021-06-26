@@ -1,8 +1,9 @@
 package example
 
 import (
-	"local/src/rbtree"
 	"testing"
+
+	"github.com/crazytaxi824/mle/tree/rbtree"
 )
 
 var items = []int64{10, 18, 7, 15, 16, 30, 25, 40, 60, 2, 1, 70, 65}

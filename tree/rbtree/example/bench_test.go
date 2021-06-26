@@ -2,9 +2,10 @@ package example
 
 import (
 	"crypto/rand"
-	"local/src/rbtree"
 	"math/big"
 	"testing"
+
+	"github.com/crazytaxi824/mle/tree/rbtree"
 )
 
 func Benchmark_RBTreeAdd(b *testing.B) {

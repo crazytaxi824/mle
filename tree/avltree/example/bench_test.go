@@ -2,10 +2,11 @@ package example
 
 import (
 	"crypto/rand"
-	"local/src/avltree"
 	"math/big"
 	"sort"
 	"testing"
+
+	"github.com/crazytaxi824/mle/tree/avltree"
 )
 
 func Benchmark_AVLTreeAdd(b *testing.B) {

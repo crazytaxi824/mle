@@ -2,7 +2,8 @@ package example
 
 import (
 	"fmt"
-	"local/src/rbtree"
+
+	"github.com/crazytaxi824/mle/tree/rbtree"
 )
 
 func PrintALL(t rbtree.Tree) {

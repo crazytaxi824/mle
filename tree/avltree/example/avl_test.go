@@ -1,8 +1,9 @@
 package example
 
 import (
-	"local/src/avltree"
 	"testing"
+
+	"github.com/crazytaxi824/mle/tree/avltree"
 )
 
 var items = []int64{100, 150, 50, 30, 70, 120, 20, 10, 40, 80, 81, 82, 83, 84, 85, 86, 87, 88}

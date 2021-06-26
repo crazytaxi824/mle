@@ -2,7 +2,8 @@ package example
 
 import (
 	"fmt"
-	"local/src/avltree"
+
+	"github.com/crazytaxi824/mle/tree/avltree"
 )
 
 func PrintTree(t avltree.Tree) {

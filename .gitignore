@@ -1,9 +1,8 @@
 .idea
+.vscode
 *.iml
 go.sum
 test
 *.txt
-
-main.go
 
 newfunc
