@@ -49,3 +49,13 @@ func Test_UnmarshalJSONC(t *testing.T) {
 
 	t.Log(buf.String())
 }
+
+func Test_FindSecondLast(t *testing.T) {
+	a, b, err := FindSecondLastLine([]byte(jsoncTest))
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	t.Log(a, b)
+}
