@@ -190,17 +190,21 @@ func JSONCToJSON(jsonc []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-type JSONCstatment struct {
+type jsoncStatement struct {
 	LineIndex          int // 行号
 	LastValidCharIndex int // 最后一个有效字符的 index，后面的 // comments 不算在内
 }
 
-// find second last line and lastCharIndex
-func FindSecondLastLine(jsonc []byte) (secondLastLine, lastCharIndex int, err error) {
+// 向 jsonc 最后添加设置
+func AppendToJSONC(jsonc, content []byte) ([]byte, error) {
+	if len(content) == 0 {
+		return jsonc, nil
+	}
+
 	lines := bytes.Split(jsonc, []byte("\n"))
 
 	var (
-		result       []JSONCstatment
+		result       []jsoncStatement
 		lastIndex    int
 		multiComment bool
 		er           error
@@ -219,20 +223,56 @@ func FindSecondLastLine(jsonc []byte) (secondLastLine, lastCharIndex int, err er
 
 		lastIndex, multiComment, er = lastValidChatInJSONCline(line, start)
 		if er != nil {
-			return 0, 0, er
+			return nil, er
 		}
 
 		// lastIndex == -1, 表示整行都是 comment, 或者是空行
 		if lastIndex != -1 {
-			result = append(result, JSONCstatment{i, lastIndex})
+			result = append(result, jsoncStatement{i, lastIndex})
 		}
 	}
 
 	l := len(result)
-	var r JSONCstatment
-	if l > 1 {
-		r = result[l-2]
+	var r jsoncStatement
+	var newJSONC [][]byte
+
+	// TODO if l == 0 表示整个文件中连 {} 都没有，只有 comments
+	if l == 0 {
+		return nil, errors.New("append to nil valid jsonc file")
 	}
 
-	return r.LineIndex, r.LastValidCharIndex, nil
+	last := result[l-1]
+	if last.LastValidCharIndex == 0 { // 最后一行只有一个 '}' || ']' 的情况
+		r = result[l-2]
+
+		tmp := make([]byte, 0, len(lines[r.LineIndex])+1)
+		tmp = append(tmp, lines[r.LineIndex][:r.LastValidCharIndex+1]...)
+		tmp = append(tmp, ',')
+		tmp = append(tmp, lines[r.LineIndex][r.LastValidCharIndex+1:]...)
+		lines[r.LineIndex] = tmp
+
+		newJSONC = append(newJSONC, lines[:r.LineIndex+1]...)
+		newJSONC = append(newJSONC, content)
+		newJSONC = append(newJSONC, lines[r.LineIndex+1:]...)
+	} else {
+		r.LineIndex = last.LineIndex
+		r.LastValidCharIndex = last.LastValidCharIndex - 1
+
+		char := lines[r.LineIndex][r.LastValidCharIndex]
+
+		tmp := make([]byte, 0, 100)
+		tmp = append(tmp, lines[r.LineIndex][:r.LastValidCharIndex+1]...)
+
+		if char != '{' && char != '[' { // 判断是否应该添加 ','
+			tmp = append(tmp, ',')
+		}
+
+		tmp = append(tmp, content...)
+		tmp = append(tmp, lines[r.LineIndex][r.LastValidCharIndex+1:]...)
+		lines[r.LineIndex] = tmp
+
+		newJSONC = lines
+	}
+
+	return bytes.Join(newJSONC, []byte("\n")), nil
 }
